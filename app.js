@@ -1,149 +1,85 @@
-// =====================================
-// BELIVIO - JAVASCRIPT
-// =====================================
 
 const $ = (selector) => document.querySelector(selector);
+const $$ = (selector) => [...document.querySelectorAll(selector)];
 
-// Format Rupiah
-function formatRupiah(number) {
-  return new Intl.NumberFormat("id-ID", {
+const formatRupiah = (number) =>
+  new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
     maximumFractionDigits: 0
   }).format(number);
-}
 
-// Format angka desimal
-function formatNumber(number) {
-  return new Intl.NumberFormat("id-ID", {
+const formatUnitPrice = (number) =>
+  new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
     maximumFractionDigits: 2
   }).format(number);
-}
 
-// Mengamankan teks sebelum dimasukkan ke HTML
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, (char) => {
-    const entities = {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    };
-
-    return entities[char];
-  });
-}
-
+const escapeHTML = (value) =>
+  String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#039;"
+  })[char]);
 
 // =====================================
-// 1. QUICK DISCOUNT CALCULATOR
+// 1. KALKULATOR DISKON
 // =====================================
 
-function calculateDiscount() {
+$("#calculateDiscount").addEventListener("click", () => {
   const price = Number($("#discountPrice").value);
   const discount = Number($("#discountPercent").value);
-
   const error = $("#discountError");
   const result = $("#discountResult");
 
   error.textContent = "";
 
-  // Validasi harga
-  if (
-    $("#discountPrice").value.trim() === "" ||
-    !Number.isFinite(price) ||
-    price <= 0
-  ) {
-    error.textContent = "Masukkan harga asli yang lebih dari 0.";
+  if ($("#discountPrice").value === "" ||
+      $("#discountPercent").value === "") {
+    error.textContent = "Harga dan persentase diskon harus diisi.";
     return;
   }
 
-  // Validasi diskon
-  if (
-    $("#discountPercent").value.trim() === "" ||
-    !Number.isFinite(discount) ||
-    discount < 0 ||
-    discount > 100
-  ) {
-    error.textContent = "Masukkan diskon antara 0 sampai 100%.";
+  if (!Number.isFinite(price) || price <= 0) {
+    error.textContent = "Harga awal harus lebih dari 0.";
     return;
   }
 
-  // Perhitungan
-  const discountAmount = price * discount / 100;
-  const finalPrice = price - discountAmount;
+  if (!Number.isFinite(discount) || discount < 0 || discount > 100) {
+    error.textContent = "Diskon harus berada di antara 0 sampai 100%.";
+    return;
+  }
 
-  // Menampilkan hasil
+  const savings = price * discount / 100;
+  const finalPrice = price - savings;
+
   result.innerHTML = `
-    <div class="discount-output">
-
-      <span class="result-caption">
-        HARGA SETELAH DISKON
-      </span>
-
-      <div class="final-price">
-        ${formatRupiah(finalPrice)}
-      </div>
-
-      <div class="result-detail">
-        <span>Harga asli</span>
-        <strong>${formatRupiah(price)}</strong>
-      </div>
-
-      <div class="result-detail">
-        <span>Persentase diskon</span>
-        <strong>${formatNumber(discount)}%</strong>
-      </div>
-
-      <div class="result-detail">
-        <span>Potongan harga</span>
-        <strong class="saving-text">
-          - ${formatRupiah(discountAmount)}
-        </strong>
-      </div>
-
-      <div class="result-detail">
-        <span>Harga akhir</span>
-        <strong>${formatRupiah(finalPrice)}</strong>
-      </div>
-
-      <div class="result-note">
-        Kamu menghemat sebesar
-        <strong>${formatRupiah(discountAmount)}</strong>
-        dari harga awal produk.
-      </div>
-
-    </div>
+    <span class="result-caption">HARGA SETELAH DISKON</span>
+    <h3>${formatRupiah(finalPrice)}</h3>
+    <p>Harga awal: ${formatRupiah(price)}</p>
+    <p>Potongan harga: ${formatRupiah(savings)} (${discount}%)</p>
+    <strong>Kamu menghemat ${formatRupiah(savings)}!</strong>
   `;
-}
+});
 
-
-// Tombol hitung diskon
-$("#calculateDiscount").addEventListener("click", calculateDiscount);
-
-
-// Reset kalkulator diskon
 $("#resetDiscount").addEventListener("click", () => {
   $("#discountPrice").value = "";
   $("#discountPercent").value = "";
   $("#discountError").textContent = "";
 
   $("#discountResult").innerHTML = `
-    <div class="result-placeholder">
-      <div class="placeholder-icon">%</div>
-      <h5>Hasil Perhitungan</h5>
-      <p>
-        Masukkan harga dan diskon untuk melihat
-        hasil perhitungan di sini.
-      </p>
-    </div>
+    <span class="result-caption">HARGA SETELAH DISKON</span>
+    <h3>Rp0</h3>
+    <p>Hasil perhitungan akan muncul di sini.</p>
   `;
 });
 
 
 // =====================================
-// 2. PRODUCT COMPARISON
+// 2. PERBANDINGAN PRODUK
 // =====================================
 
 function getProducts() {
@@ -151,83 +87,50 @@ function getProducts() {
 
   for (let i = 1; i <= 3; i++) {
     const name = $(`#name${i}`).value.trim();
-    const priceValue = $(`#price${i}`).value.trim();
-    const quantityValue = $(`#quantity${i}`).value.trim();
-    const discountValue = $(`#discount${i}`).value.trim();
+    const priceText = $(`#price${i}`).value;
+    const discountText = $(`#discount${i}`).value;
+    const quantityText = $(`#quantity${i}`).value;
 
-    // Produk C boleh kosong.
-    // Diskon default 0 tidak dianggap sebagai input produk.
-    const hasRequiredInput = name || priceValue || quantityValue;
+    const hasInput = name || priceText || quantityText;
 
-    if (i === 3 && !hasRequiredInput) {
-      continue;
+    if (i === 3 && !hasInput) continue;
+
+    if (!name || priceText === "" || quantityText === "") {
+      throw new Error(`Lengkapi nama, harga, dan jumlah Produk ${String.fromCharCode(64 + i)}.`);
     }
 
-    // Produk A dan B wajib diisi
-    if (!name || !priceValue || !quantityValue) {
-      throw new Error(
-        `Lengkapi nama, harga, dan jumlah isi Produk ${String.fromCharCode(64 + i)}.`
-      );
+    const price = Number(priceText);
+    const discount = discountText === "" ? 0 : Number(discountText);
+    const quantity = Number(quantityText);
+
+    if (!Number.isFinite(price) || price <= 0 ||
+        !Number.isFinite(quantity) || quantity <= 0) {
+      throw new Error("Harga dan jumlah produk harus lebih dari 0.");
     }
 
-    const price = Number(priceValue);
-    const quantity = Number(quantityValue);
-
-    // Jika diskon kosong, dianggap 0%
-    const discount = discountValue === ""
-      ? 0
-      : Number(discountValue);
-
-    // Validasi harga
-    if (!Number.isFinite(price) || price <= 0) {
-      throw new Error(
-        `Harga Produk ${String.fromCharCode(64 + i)} harus lebih dari 0.`
-      );
+    if (!Number.isFinite(discount) || discount < 0 || discount > 100) {
+      throw new Error("Diskon harus berada di antara 0 sampai 100%.");
     }
 
-    // Validasi jumlah
-    if (!Number.isFinite(quantity) || quantity <= 0) {
-      throw new Error(
-        `Jumlah isi Produk ${String.fromCharCode(64 + i)} harus lebih dari 0.`
-      );
-    }
-
-    // Validasi diskon
-    if (
-      !Number.isFinite(discount) ||
-      discount < 0 ||
-      discount > 100
-    ) {
-      throw new Error(
-        `Diskon Produk ${String.fromCharCode(64 + i)} harus antara 0 sampai 100%.`
-      );
-    }
-
-    // Menghitung harga akhir
-    const discountAmount = price * discount / 100;
-    const finalPrice = price - discountAmount;
-
-    // Menghitung harga per satuan
+    const finalPrice = price - (price * discount / 100);
     const unitPrice = finalPrice / quantity;
 
     products.push({
       name,
       price,
       discount,
-      discountAmount,
-      finalPrice,
       quantity,
+      finalPrice,
       unitPrice
     });
   }
 
+  if (products.length < 2) {
+    throw new Error("Masukkan minimal dua produk untuk dibandingkan.");
+  }
+
   return products;
 }
-
-
-// =====================================
-// 3. COMPARISON PROCESS
-// =====================================
 
 function compareProducts() {
   const error = $("#comparisonError");
@@ -238,67 +141,433 @@ function compareProducts() {
 
   try {
     const products = getProducts();
-
-    const budgetValue = $("#budget").value.trim();
-    const budget = budgetValue === ""
-      ? null
-      : Number(budgetValue);
-
-    // Validasi jumlah produk
-    if (products.length < 2) {
-      throw new Error("Masukkan minimal 2 produk untuk dibandingkan.");
-    }
-
-    // Validasi anggaran
-    if (
-      budget !== null &&
-      (!Number.isFinite(budget) || budget <= 0)
-    ) {
-      throw new Error("Anggaran harus lebih dari 0.");
-    }
-
+    const budgetText = $("#budget").value;
+    const budget = budgetText === "" ? null : Number(budgetText);
     const unit = $("#unit").value;
 
-    // Urutkan berdasarkan harga per satuan
-    const sortedProducts = [...products].sort(
-      (a, b) => a.unitPrice - b.unitPrice
+    if (budget !== null && (!Number.isFinite(budget) || budget < 0)) {
+      throw new Error("Budget tidak boleh bernilai negatif.");
+    }
+
+    const lowest = Math.min(...products.map(p => p.unitPrice));
+    const winners = products.filter(p => Math.abs(p.unitPrice - lowest) < 0.000001);
+
+    const highest = Math.max(...products.map(p => p.unitPrice));
+    const difference = highest - lowest;
+
+    let winnerMessage;
+
+    if (winners.length > 1) {
+      winnerMessage = `Produk ${winners.map(p => escapeHTML(p.name)).join(" dan ")} memiliki harga per satuan paling ekonomis.`;
+    } else {
+      winnerMessage = `Produk ${escapeHTML(winners[0].name)} memiliki harga per satuan paling ekonomis.`;
+    }
+
+    const tableRows = products.map(product => {
+      const isWinner = Math.abs(product.unitPrice - lowest) < 0.000001;
+      const budgetStatus = budget === null
+        ? "-"
+        : product.finalPrice <= budget ? "Sesuai budget" : "Melebihi budget";
+
+      return `
+        <tr>
+          <td>
+            <strong>${escapeHTML(product.name)}</strong>
+            ${isWinner ? '<br><span class="winner-tag">Paling ekonomis</span>' : ""}
+          </td>
+          <td>${formatRupiah(product.price)}</td>
+          <td>${product.discount}%</td>
+          <td>${formatRupiah(product.finalPrice)}</td>
+          <td>${product.quantity} ${unit}</td>
+          <td><strong>${formatUnitPrice(product.unitPrice)}</strong></td>
+          <td>${budgetStatus}</td>
+        </tr>
+      `;
+    }).join("");
+
+    result.innerHTML = `
+      <div class="recommendation-box">
+        <strong>Rekomendasi Belivio</strong>
+        <p class="mb-0">${winnerMessage}</p>
+      </div>
+
+      <div class="comparison-table">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Produk</th>
+              <th>Harga Awal</th>
+              <th>Diskon</th>
+              <th>Harga Akhir</th>
+              <th>Jumlah</th>
+              <th>Harga per ${unit}</th>
+              <th>Budget</th>
+            </tr>
+          </thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>
+
+      <div class="insight-box">
+        <strong>Informasi Perbandingan</strong>
+        <p class="mb-1">Harga per satuan terendah: ${formatUnitPrice(lowest)}</p>
+        <p class="mb-1">Harga per satuan tertinggi: ${formatUnitPrice(highest)}</p>
+        <p class="mb-0">Selisih harga per satuan: ${formatUnitPrice(difference)}</p>
+      </div>
+    `;
+  } catch (err) {
+    error.textContent = err.message;
+  }
+}
+
+$("#compareButton").addEventListener("click", compareProducts);
+
+$("#resetComparison").addEventListener("click", () => {
+  for (let i = 1; i <= 3; i++) {
+    $(`#name${i}`).value = "";
+    $(`#price${i}`).value = "";
+    $(`#discount${i}`).value = "";
+    $(`#quantity${i}`).value = "";
+  }
+
+  $("#budget").value = "";
+  $("#unit").value = "gram";
+  $("#comparisonError").textContent = "";
+  $("#comparisonResult").innerHTML = "";
+});
+
+
+// =====================================
+// 3. SPLIT BILL
+// =====================================
+
+let splitMode = "equal";
+
+// Mengubah metode pembagian
+$$(".method-button").forEach(button => {
+  button.addEventListener("click", () => {
+    splitMode = button.dataset.mode;
+
+    $$(".method-button").forEach(btn => {
+      btn.classList.toggle("active", btn === button);
+    });
+
+    $("#equalMode").hidden = splitMode !== "equal";
+    $("#customMode").hidden = splitMode !== "custom";
+
+    $("#splitError").textContent = "";
+    $("#splitResult").hidden = true;
+  });
+});
+
+
+// Membuat baris orang untuk mode bagi rata
+function createEqualPerson(name = "") {
+  const row = document.createElement("div");
+  row.className = "person-row";
+
+  const input = document.createElement("input");
+  input.type = "text";
+  input.className = "form-control person-name";
+  input.placeholder = "Nama orang";
+  input.value = name;
+
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "remove-person";
+  remove.textContent = "×";
+  remove.setAttribute("aria-label", "Hapus orang");
+
+  remove.addEventListener("click", () => {
+    row.remove();
+    updateRemoveButtons("#equalPeopleList");
+    hideSplitResult();
+  });
+
+  row.append(input, remove);
+  return row;
+}
+
+
+// Membuat baris orang untuk mode sesuai pesanan
+function createCustomPerson(name = "", amount = "") {
+  const row = document.createElement("div");
+  row.className = "custom-person-row";
+
+  const nameWrapper = document.createElement("div");
+  const nameInput = document.createElement("input");
+  nameInput.type = "text";
+  nameInput.className = "form-control custom-name";
+  nameInput.placeholder = "Nama orang";
+  nameInput.value = name;
+  nameWrapper.appendChild(nameInput);
+
+  const amountWrapper = document.createElement("div");
+  const amountInput = document.createElement("input");
+  amountInput.type = "number";
+  amountInput.className = "form-control custom-amount";
+  amountInput.placeholder = "Harga pesanan (Rp)";
+  amountInput.min = "0";
+  amountInput.value = amount;
+  amountWrapper.appendChild(amountInput);
+
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.className = "remove-person";
+  remove.textContent = "×";
+  remove.setAttribute("aria-label", "Hapus orang");
+
+  remove.addEventListener("click", () => {
+    row.remove();
+    updateRemoveButtons("#customPeopleList");
+    updateCustomSubtotal();
+    hideSplitResult();
+  });
+
+  nameInput.addEventListener("input", hideSplitResult);
+  amountInput.addEventListener("input", () => {
+    updateCustomSubtotal();
+    hideSplitResult();
+  });
+
+  row.append(nameWrapper, amountWrapper, remove);
+  return row;
+}
+
+
+// Tombol tambah orang
+$("#addEqualPerson").addEventListener("click", () => {
+  const list = $("#equalPeopleList");
+
+  if (list.children.length >= 30) {
+    $("#splitError").textContent = "Maksimal 30 orang.";
+    return;
+  }
+
+  list.appendChild(createEqualPerson(`Orang ${list.children.length + 1}`));
+  updateRemoveButtons("#equalPeopleList");
+  hideSplitResult();
+});
+
+$("#addCustomPerson").addEventListener("click", () => {
+  const list = $("#customPeopleList");
+
+  if (list.children.length >= 30) {
+    $("#splitError").textContent = "Maksimal 30 orang.";
+    return;
+  }
+
+  list.appendChild(createCustomPerson(`Orang ${list.children.length + 1}`));
+  updateRemoveButtons("#customPeopleList");
+  updateCustomSubtotal();
+  hideSplitResult();
+});
+
+
+// Mengatur tombol hapus agar minimal ada 2 orang
+function updateRemoveButtons(selector) {
+  const rows = $$(selector + " > div");
+
+  rows.forEach(row => {
+    const button = row.querySelector(".remove-person");
+    button.disabled = rows.length <= 2;
+  });
+}
+
+
+// Menghitung total pesanan mode custom
+function updateCustomSubtotal() {
+  const amounts = $$(".custom-amount");
+
+  const total = amounts.reduce((sum, input) => {
+    return sum + (input.value === "" ? 0 : Number(input.value));
+  }, 0);
+
+  $("#customSubtotal").textContent = formatRupiah(total);
+}
+
+
+// Menyembunyikan hasil jika input berubah
+function hideSplitResult() {
+  $("#splitResult").hidden = true;
+  $("#splitError").textContent = "";
+}
+
+$("#equalTotal").addEventListener("input", hideSplitResult);
+$("#extraFee").addEventListener("input", hideSplitResult);
+$("#billName").addEventListener("input", hideSplitResult);
+
+$("#equalPeopleList").addEventListener("input", hideSplitResult);
+
+
+// Membagi nominal dengan pembulatan rupiah
+// Sisa pembulatan diberikan kepada beberapa orang pertama.
+function distributeAmount(total, weights) {
+  const weightTotal = weights.reduce((sum, value) => sum + value, 0);
+
+  if (weightTotal <= 0) {
+    throw new Error("Total pesanan harus lebih dari 0.");
+  }
+
+  const exactAmounts = weights.map(weight =>
+    total * weight / weightTotal
+  );
+
+  const amounts = exactAmounts.map(value => Math.floor(value));
+  let remainder = total - amounts.reduce((sum, value) => sum + value, 0);
+
+  const fractions = exactAmounts
+    .map((value, index) => ({
+      index,
+      fraction: value - Math.floor(value)
+    }))
+    .sort((a, b) => b.fraction - a.fraction);
+
+  for (let i = 0; i < remainder; i++) {
+    amounts[fractions[i % fractions.length].index]++;
+  }
+
+  return amounts;
+}
+
+
+// Mengambil data orang dari mode bagi rata
+function getEqualPeople() {
+  const rows = $$("#equalPeopleList .person-row");
+
+  if (rows.length < 2) {
+    throw new Error("Minimal harus ada dua orang.");
+  }
+
+  return rows.map((row, index) => {
+    const name = row.querySelector(".person-name").value.trim();
+
+    return {
+      name: name || `Orang ${index + 1}`,
+      subtotal: 1
+    };
+  });
+}
+
+
+// Mengambil data orang dari mode sesuai pesanan
+function getCustomPeople() {
+  const rows = $$("#customPeopleList .custom-person-row");
+
+  if (rows.length < 2) {
+    throw new Error("Minimal harus ada dua orang.");
+  }
+
+  return rows.map((row, index) => {
+    const name = row.querySelector(".custom-name").value.trim();
+    const amountText = row.querySelector(".custom-amount").value;
+
+    if (amountText === "") {
+      throw new Error(`Masukkan harga pesanan ${name || `orang ${index + 1}`}.`);
+    }
+
+    const amount = Number(amountText);
+
+    if (!Number.isFinite(amount) || amount < 0) {
+      throw new Error("Harga pesanan tidak boleh negatif.");
+    }
+
+    return {
+      name: name || `Orang ${index + 1}`,
+      subtotal: amount
+    };
+  });
+}
+
+
+// Menghitung Split Bill
+function calculateSplitBill() {
+  const error = $("#splitError");
+  const result = $("#splitResult");
+
+  error.textContent = "";
+  result.hidden = true;
+
+  try {
+    const extraText = $("#extraFee").value;
+    const extraFee = extraText === "" ? 0 : Number(extraText);
+
+    if (!Number.isFinite(extraFee) || extraFee < 0) {
+      throw new Error("Biaya tambahan tidak boleh negatif.");
+    }
+
+    let people;
+    let subtotal;
+
+    if (splitMode === "equal") {
+      people = getEqualPeople();
+
+      const totalText = $("#equalTotal").value;
+
+      if (totalText === "") {
+        throw new Error("Masukkan total tagihan terlebih dahulu.");
+      }
+
+      subtotal = Number(totalText);
+
+      if (!Number.isFinite(subtotal) || subtotal <= 0) {
+        throw new Error("Total tagihan harus lebih dari 0.");
+      }
+
+      // Membagi total tagihan termasuk biaya tambahan secara rata.
+      const grandTotal = subtotal + extraFee;
+      const shares = distributeAmount(
+        grandTotal,
+        people.map(() => 1)
+      );
+
+      people = people.map((person, index) => ({
+        ...person,
+        payment: shares[index],
+        orderAmount: 0
+      }));
+
+      renderSplitResult({
+        people,
+        subtotal,
+        extraFee,
+        grandTotal,
+        method: "Dibagi rata"
+      });
+
+      return;
+    }
+
+    people = getCustomPeople();
+    subtotal = people.reduce((sum, person) => sum + person.subtotal, 0);
+
+    if (subtotal <= 0) {
+      throw new Error("Total pesanan harus lebih dari 0.");
+    }
+
+    const grandTotal = subtotal + extraFee;
+
+    // Biaya tambahan dibagi secara proporsional
+    // berdasarkan harga pesanan setiap orang.
+    const extraShares = distributeAmount(
+      extraFee,
+      people.map(person => person.subtotal)
     );
 
-    // Produk dengan harga per satuan terendah
-    const lowestPrice = sortedProducts[0].unitPrice;
+    people = people.map((person, index) => ({
+      ...person,
+      payment: person.subtotal + extraShares[index],
+      orderAmount: person.subtotal,
+      extraShare: extraShares[index]
+    }));
 
-    // Mengambil produk yang memiliki harga satuan sama
-    const winners = sortedProducts.filter(product =>
-      Math.abs(product.unitPrice - lowestPrice) < 0.0000001
-    );
-
-    // Jika ada anggaran, tampilkan status setiap produk
-    const withinBudget = budget === null
-      ? []
-      : products.filter(product => product.finalPrice <= budget);
-
-    displayRecommendation(
-      winners,
-      sortedProducts,
-      budget,
-      withinBudget,
-      unit
-    );
-
-    displayComparisonTable(
-      sortedProducts,
-      winners,
-      budget,
-      unit
-    );
-
-    displayInsight(
-      products,
-      winners,
-      budget,
-      withinBudget,
-      unit
-    );
+    renderSplitResult({
+      people,
+      subtotal,
+      extraFee,
+      grandTotal,
+      method: "Sesuai pesanan"
+    });
 
   } catch (err) {
     error.textContent = err.message;
@@ -306,265 +575,99 @@ function compareProducts() {
 }
 
 
-// =====================================
-// 4. RECOMMENDATION
-// =====================================
+// Menampilkan hasil
+function renderSplitResult(data) {
+  const {
+    people,
+    subtotal,
+    extraFee,
+    grandTotal,
+    method
+  } = data;
 
-function displayRecommendation(
-  winners,
-  products,
-  budget,
-  withinBudget,
-  unit
-) {
-  const result = $("#comparisonResult");
+  $("#resultBillName").textContent =
+    $("#billName").value.trim() || "Rincian Tagihan";
 
-  const winnerNames = winners
-    .map(product => escapeHTML(product.name))
-    .join(", ");
+  $("#resultGrandTotal").textContent = formatRupiah(grandTotal);
+  $("#resultMethod").textContent = `Metode: ${method}`;
+  $("#resultSubtotal").textContent = formatRupiah(subtotal);
+  $("#resultExtra").textContent = formatRupiah(extraFee);
+  $("#resultPeople").textContent = `${people.length} orang`;
+  $("#resultCheckTotal").textContent = formatRupiah(
+    people.reduce((sum, person) => sum + person.payment, 0)
+  );
 
-  const winnerPrice = formatNumber(winners[0].unitPrice);
+  const breakdown = people.map(person => {
+    let detail = "";
 
-  let recommendationText = "";
-
-  if (winners.length > 1) {
-    recommendationText =
-      `${winnerNames} memiliki harga per satuan terendah yang sama, yaitu ${formatRupiah(winners[0].unitPrice)} per ${unit}.`;
-  } else {
-    recommendationText =
-      `${winnerNames} memiliki harga per satuan paling rendah, yaitu ${formatRupiah(winners[0].unitPrice)} per ${unit}.`;
-  }
-
-  // Informasi anggaran
-  if (budget !== null) {
-    if (withinBudget.length === 0) {
-      recommendationText +=
-        " Namun, tidak ada produk yang sesuai dengan anggaranmu.";
+    if (method === "Sesuai pesanan") {
+      detail = `
+        <small>
+          Pesanan: ${formatRupiah(person.orderAmount)}
+          · Biaya tambahan: ${formatRupiah(person.extraShare)}
+        </small>
+      `;
     } else {
-      const affordableWinners = winners.filter(
-        product => product.finalPrice <= budget
-      );
-
-      if (affordableWinners.length > 0) {
-        recommendationText +=
-          ` Produk dengan harga satuan terbaik tersebut juga sesuai dengan anggaran ${formatRupiah(budget)}.`;
-      } else {
-        recommendationText +=
-          ` Ada ${withinBudget.length} produk yang masih sesuai dengan anggaran, tetapi bukan pilihan dengan harga satuan terendah.`;
-      }
-    }
-  }
-
-  result.innerHTML = `
-    <h4 class="result-section-title">
-      Hasil Perbandingan
-    </h4>
-
-    <div class="recommendation-card">
-      <span class="recommendation-label">
-        HASIL ANALISIS BELIVIO
-      </span>
-
-      <h4>
-        ${winners.length > 1
-          ? "Beberapa Produk Memiliki Nilai Terbaik"
-          : "Produk dengan Nilai Terbaik"
-        }
-      </h4>
-
-      <p>${recommendationText}</p>
-    </div>
-  `;
-}
-
-
-// =====================================
-// 5. COMPARISON TABLE
-// =====================================
-
-function displayComparisonTable(
-  products,
-  winners,
-  budget,
-  unit
-) {
-  const result = $("#comparisonResult");
-
-  const rows = products.map(product => {
-    const isWinner = winners.includes(product);
-
-    let budgetStatus = "-";
-
-    if (budget !== null) {
-      budgetStatus = product.finalPrice <= budget
-        ? `<span class="budget-ok">Sesuai</span>`
-        : `<span class="budget-over">Melebihi</span>`;
+      detail = `<small>Bagian dari total tagihan</small>`;
     }
 
     return `
-      <tr class="${isWinner ? "winner-row" : ""}">
-
-        <td>
-          <strong>${escapeHTML(product.name)}</strong>
-
-          ${isWinner
-            ? `<br><span class="winner-tag">Nilai terbaik</span>`
-            : ""
-          }
-        </td>
-
-        <td>${formatRupiah(product.price)}</td>
-
-        <td>${formatNumber(product.discount)}%</td>
-
-        <td>${formatRupiah(product.finalPrice)}</td>
-
-        <td>${formatNumber(product.quantity)} ${unit}</td>
-
-        <td>
-          <strong>${formatRupiah(product.unitPrice)}</strong>
-        </td>
-
-        <td>${budgetStatus}</td>
-
-      </tr>
+      <div class="split-person-result">
+        <div>
+          <span>${escapeHTML(person.name)}</span>
+          ${detail}
+        </div>
+        <strong>${formatRupiah(person.payment)}</strong>
+      </div>
     `;
   }).join("");
 
-  result.innerHTML += `
-    <h5 class="result-section-title mt-4">
-      Detail Perbandingan Produk
-    </h5>
-
-    <div class="result-table-wrapper">
-
-      <table class="result-table">
-
-        <thead>
-          <tr>
-            <th>Produk</th>
-            <th>Harga Awal</th>
-            <th>Diskon</th>
-            <th>Harga Akhir</th>
-            <th>Jumlah Isi</th>
-            <th>Harga / Satuan</th>
-            <th>Status Anggaran</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          ${rows}
-        </tbody>
-
-      </table>
-
-    </div>
-  `;
+  $("#splitBreakdown").innerHTML = breakdown;
+  $("#splitResult").hidden = false;
 }
 
 
-// =====================================
-// 6. INSIGHT / ANALYSIS
-// =====================================
+// Tombol hitung
+$("#calculateSplit").addEventListener("click", calculateSplitBill);
 
-function displayInsight(
-  products,
-  winners,
-  budget,
-  withinBudget,
-  unit
-) {
-  const result = $("#comparisonResult");
 
-  const lowest = Math.min(
-    ...products.map(product => product.unitPrice)
+// Reset Split Bill
+$("#resetSplit").addEventListener("click", () => {
+  $("#billName").value = "";
+  $("#extraFee").value = "0";
+  $("#equalTotal").value = "";
+
+  $("#equalPeopleList").innerHTML = "";
+  $("#equalPeopleList").append(
+    createEqualPerson("Orang 1"),
+    createEqualPerson("Orang 2")
   );
 
-  const highest = Math.max(
-    ...products.map(product => product.unitPrice)
+  $("#customPeopleList").innerHTML = "";
+  $("#customPeopleList").append(
+    createCustomPerson("Orang 1"),
+    createCustomPerson("Orang 2")
   );
 
-  const difference = highest - lowest;
+  $("#splitError").textContent = "";
+  $("#splitResult").hidden = true;
 
-  const mostExpensive = products.find(
-    product => product.unitPrice === highest
-  );
+  updateRemoveButtons("#equalPeopleList");
+  updateRemoveButtons("#customPeopleList");
+  updateCustomSubtotal();
 
-  let insight = `
-    Berdasarkan perhitungan, harga per ${unit}
-    paling rendah adalah ${formatRupiah(lowest)}.
-    Sementara itu, selisih antara harga per satuan
-    tertinggi dan terendah adalah ${formatRupiah(difference)}.
-  `;
+  splitMode = "equal";
 
-  if (mostExpensive && difference > 0.0000001) {
-    insight += `
-      Produk ${escapeHTML(mostExpensive.name)}
-      memiliki harga per satuan paling tinggi.
-    `;
-  } else {
-    insight += `
-      Semua produk memiliki harga per satuan yang sama.
-    `;
-  }
+  $$(".method-button").forEach(button => {
+    button.classList.toggle("active", button.dataset.mode === "equal");
+  });
 
-  if (budget !== null) {
-    insight += `
-      Dari ${products.length} produk yang dibandingkan,
-      ${withinBudget.length} produk sesuai dengan anggaran
-      ${formatRupiah(budget)}.
-    `;
-  }
-
-  result.innerHTML += `
-    <div class="insight-card">
-
-      <h6>Insight Perbandingan</h6>
-
-      <p>${insight}</p>
-
-    </div>
-
-    <p class="result-note-small">
-      Catatan: Rekomendasi didasarkan pada harga akhir
-      per satuan. Produk dengan harga per satuan terendah
-      belum tentu memiliki harga pembelian total terendah.
-      Pastikan satuan produk yang dibandingkan sama.
-    </p>
-  `;
-}
+  $("#equalMode").hidden = false;
+  $("#customMode").hidden = true;
+});
 
 
-// =====================================
-// 7. RESET COMPARISON
-// =====================================
-
-function resetComparison() {
-  for (let i = 1; i <= 3; i++) {
-    $(`#name${i}`).value = "";
-    $(`#price${i}`).value = "";
-    $(`#discount${i}`).value = "0";
-    $(`#quantity${i}`).value = "";
-  }
-
-  $("#unit").value = "gram";
-  $("#budget").value = "";
-
-  $("#comparisonError").textContent = "";
-  $("#comparisonResult").innerHTML = "";
-}
-
-
-// =====================================
-// 8. EVENT LISTENERS
-// =====================================
-
-$("#compareButton").addEventListener(
-  "click",
-  compareProducts
-);
-
-$("#resetComparison").addEventListener(
-  "click",
-  resetComparison
-);
+// Inisialisasi tampilan awal
+updateRemoveButtons("#equalPeopleList");
+updateRemoveButtons("#customPeopleList");
+updateCustomSubtotal();
