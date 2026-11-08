@@ -2,119 +2,125 @@
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => [...document.querySelectorAll(selector)];
 
-const formatRupiah = (number) =>
-  new Intl.NumberFormat("id-ID", {
+const formatRupiah = (value) => {
+  return new Intl.NumberFormat("id-ID", {
     style: "currency",
     currency: "IDR",
     maximumFractionDigits: 0
-  }).format(number);
+  }).format(value);
+};
 
-const formatUnitPrice = (number) =>
-  new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 2
-  }).format(number);
-
-const escapeHTML = (value) =>
-  String(value).replace(/[&<>"']/g, (char) => ({
+const escapeHTML = (value) => {
+  return String(value).replace(/[&<>"']/g, (char) => ({
     "&": "&amp;",
     "<": "&lt;",
     ">": "&gt;",
     '"': "&quot;",
     "'": "&#039;"
   })[char]);
+};
 
-// =====================================
-// 1. KALKULATOR DISKON
-// =====================================
+const getNumber = (selector) => {
+  return Number($(selector).value);
+};
+
+const showError = (selector, message) => {
+  $(selector).textContent = message;
+};
+
+const clearError = (selector) => {
+  $(selector).textContent = "";
+};
+
+/* =========================
+   KALKULATOR DISKON
+========================= */
 
 $("#calculateDiscount").addEventListener("click", () => {
-  const priceText = $("#discountPrice").value;
-  const discountText = $("#discountPercent").value;
-  const price = Number(priceText);
-  const discount = Number(discountText);
-  const error = $("#discountError");
-  const result = $("#discountResult");
+  const price = getNumber("#discountPrice");
+  const percent = getNumber("#discountPercent");
 
-  error.textContent = "";
+  clearError("#discountError");
+  $("#discountResult").hidden = true;
 
-  if (priceText === "" || discountText === "") {
-    error.textContent = "Harga dan persentase diskon harus diisi.";
+  if ($("#discountPrice").value === "" || $("#discountPercent").value === "") {
+    showError("#discountError", "Yuk, isi harga awal dan persentase diskonnya terlebih dahulu.");
     return;
   }
 
-  if (!Number.isFinite(price) || price <= 0) {
-    error.textContent = "Harga awal harus lebih dari 0.";
+  if (!Number.isFinite(price) || !Number.isFinite(percent) ||
+      price <= 0 || percent < 0 || percent > 100) {
+    showError("#discountError", "Masukkan harga lebih dari 0 dan diskon antara 0–100%.");
     return;
   }
 
-  if (!Number.isFinite(discount) || discount < 0 || discount > 100) {
-    error.textContent = "Diskon harus berada di antara 0 sampai 100%.";
-    return;
-  }
+  const discountAmount = price * percent / 100;
+  const finalPrice = price - discountAmount;
 
-  const savings = price * discount / 100;
-  const finalPrice = price - savings;
+  $("#originalPriceResult").textContent = formatRupiah(price);
+  $("#discountAmountResult").textContent = formatRupiah(discountAmount);
+  $("#finalPriceResult").textContent = formatRupiah(finalPrice);
+  $("#savingText").textContent = `Kamu menghemat ${formatRupiah(discountAmount)}!`;
 
-  result.innerHTML = `
-    <span class="result-caption">HARGA SETELAH DISKON</span>
-    <h3>${formatRupiah(finalPrice)}</h3>
-    <p>Harga awal: ${formatRupiah(price)}</p>
-    <p>Potongan harga: ${formatRupiah(savings)} (${discount}%)</p>
-    <strong>Kamu menghemat ${formatRupiah(savings)}!</strong>
-  `;
+  $("#discountResult").hidden = false;
 });
 
 $("#resetDiscount").addEventListener("click", () => {
   $("#discountPrice").value = "";
   $("#discountPercent").value = "";
-  $("#discountError").textContent = "";
-
-  $("#discountResult").innerHTML = `
-    <span class="result-caption">HARGA SETELAH DISKON</span>
-    <h3>Rp0</h3>
-    <p>Hasil perhitungan akan muncul di sini.</p>
-  `;
+  $("#discountResult").hidden = true;
+  clearError("#discountError");
 });
 
+/* =========================
+   PERBANDINGAN PRODUK
+========================= */
 
-// =====================================
-// 2. PERBANDINGAN PRODUK
-// =====================================
+$("#compareButton").addEventListener("click", () => {
+  clearError("#comparisonError");
+  $("#comparisonResult").hidden = true;
 
-function getProducts() {
+  const unit = $("#unit").value;
+  const budgetValue = $("#budget").value;
+  const budget = budgetValue === "" ? null : Number(budgetValue);
+
+  if (budget !== null && (!Number.isFinite(budget) || budget < 0)) {
+    showError("#comparisonError", "Budget tidak boleh bernilai negatif.");
+    return;
+  }
+
   const products = [];
 
   for (let i = 1; i <= 3; i++) {
     const name = $(`#name${i}`).value.trim();
-    const priceText = $(`#price${i}`).value;
-    const discountText = $(`#discount${i}`).value;
-    const quantityText = $(`#quantity${i}`).value;
+    const priceValue = $(`#price${i}`).value;
+    const discountValue = $(`#discount${i}`).value;
+    const quantityValue = $(`#quantity${i}`).value;
 
-    const hasInput = name || priceText || quantityText || discountText;
+    const filled = name !== "" || priceValue !== "" ||
+      discountValue !== "" || quantityValue !== "";
 
-    if (i === 3 && !hasInput) continue;
+    if (!filled && i === 3) continue;
 
-    if (!name || priceText === "" || quantityText === "") {
-      throw new Error(
-        `Lengkapi nama, harga, dan jumlah Produk ${String.fromCharCode(64 + i)}.`
-      );
+    if (!filled) {
+      showError("#comparisonError", `Lengkapi data produk ${i}.`);
+      return;
     }
 
-    const price = Number(priceText);
-    const discount = discountText === "" ? 0 : Number(discountText);
-    const quantity = Number(quantityText);
-
-    if (
-      !Number.isFinite(price) || price <= 0 ||
-      !Number.isFinite(quantity) || quantity <= 0
-    ) {
-      throw new Error("Harga dan jumlah produk harus lebih dari 0.");
+    if (name === "" || priceValue === "" || quantityValue === "") {
+      showError("#comparisonError", `Nama, harga, dan isi produk ${i} wajib diisi.`);
+      return;
     }
 
-    if (!Number.isFinite(discount) || discount < 0 || discount > 100) {
-      throw new Error("Diskon harus berada di antara 0 sampai 100%.");
+    const price = Number(priceValue);
+    const discount = discountValue === "" ? 0 : Number(discountValue);
+    const quantity = Number(quantityValue);
+
+    if (!Number.isFinite(price) || !Number.isFinite(discount) ||
+        !Number.isFinite(quantity) || price <= 0 || quantity <= 0 ||
+        discount < 0 || discount > 100) {
+      showError("#comparisonError", `Periksa kembali angka pada produk ${i}.`);
+      return;
     }
 
     const finalPrice = price - (price * discount / 100);
@@ -131,106 +137,57 @@ function getProducts() {
   }
 
   if (products.length < 2) {
-    throw new Error("Masukkan minimal dua produk untuk dibandingkan.");
+    showError("#comparisonError", "Masukkan minimal dua produk untuk dibandingkan.");
+    return;
   }
 
-  return products;
-}
+  const winner = products.reduce((best, current) =>
+    current.unitPrice < best.unitPrice ? current : best
+  );
 
-function compareProducts() {
-  const error = $("#comparisonError");
-  const result = $("#comparisonResult");
+  let html = "";
 
-  error.textContent = "";
-  result.innerHTML = "";
+  products.forEach((product) => {
+    const isWinner = product === winner;
+    const withinBudget = budget === null || product.finalPrice <= budget;
 
-  try {
-    const products = getProducts();
-    const budgetText = $("#budget").value;
-    const budget = budgetText === "" ? null : Number(budgetText);
-    const unit = $("#unit").value;
-
-    if (budget !== null && (!Number.isFinite(budget) || budget < 0)) {
-      throw new Error("Budget tidak boleh bernilai negatif.");
-    }
-
-    const lowest = Math.min(...products.map(p => p.unitPrice));
-    const winners = products.filter(
-      p => Math.abs(p.unitPrice - lowest) < 0.000001
-    );
-
-    const highest = Math.max(...products.map(p => p.unitPrice));
-    const difference = highest - lowest;
-
-    let winnerMessage;
-
-    if (winners.length > 1) {
-      winnerMessage = `Produk ${winners.map(p => escapeHTML(p.name)).join(" dan ")} memiliki harga per satuan paling ekonomis.`;
-    } else {
-      winnerMessage = `Produk ${escapeHTML(winners[0].name)} memiliki harga per satuan paling ekonomis.`;
-    }
-
-    const tableRows = products.map(product => {
-      const isWinner = Math.abs(product.unitPrice - lowest) < 0.000001;
-
-      const budgetStatus = budget === null
-        ? "-"
-        : product.finalPrice <= budget
-          ? "Sesuai budget"
-          : "Melebihi budget";
-
-      return `
-        <tr>
-          <td>
-            <strong>${escapeHTML(product.name)}</strong>
-            ${isWinner ? '<br><span class="winner-tag">Paling ekonomis</span>' : ""}
-          </td>
-          <td>${formatRupiah(product.price)}</td>
-          <td>${product.discount}%</td>
-          <td>${formatRupiah(product.finalPrice)}</td>
-          <td>${product.quantity} ${unit}</td>
-          <td><strong>${formatUnitPrice(product.unitPrice)}</strong></td>
-          <td>${budgetStatus}</td>
-        </tr>
-      `;
-    }).join("");
-
-    result.innerHTML = `
-      <div class="recommendation-box">
-        <strong>Rekomendasi Belivio</strong>
-        <p class="mb-0">${winnerMessage}</p>
-      </div>
-
-      <div class="comparison-table">
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th>Produk</th>
-              <th>Harga Awal</th>
-              <th>Diskon</th>
-              <th>Harga Akhir</th>
-              <th>Jumlah</th>
-              <th>Harga per ${unit}</th>
-              <th>Budget</th>
-            </tr>
-          </thead>
-          <tbody>${tableRows}</tbody>
-        </table>
-      </div>
-
-      <div class="insight-box">
-        <strong>Informasi Perbandingan</strong>
-        <p class="mb-1">Harga per satuan terendah: ${formatUnitPrice(lowest)}</p>
-        <p class="mb-1">Harga per satuan tertinggi: ${formatUnitPrice(highest)}</p>
-        <p class="mb-0">Selisih harga per satuan: ${formatUnitPrice(difference)}</p>
+    html += `
+      <div class="comparison-result-card ${isWinner ? "winner" : ""}">
+        <h5>${isWinner ? "🏆 " : ""}${escapeHTML(product.name)}
+          ${isWinner ? "<span style='font-size:10px;color:#5288d3'>Pilihan paling hemat per satuan</span>" : ""}
+        </h5>
+        <div class="comparison-data">
+          <div>
+            <span>Harga setelah diskon</span>
+            <strong>${formatRupiah(product.finalPrice)}</strong>
+          </div>
+          <div>
+            <span>Harga per ${escapeHTML(unit)}</span>
+            <strong>${formatRupiah(product.unitPrice)}</strong>
+          </div>
+          <div>
+            <span>Jumlah isi</span>
+            <strong>${product.quantity} ${escapeHTML(unit)}</strong>
+          </div>
+          <div>
+            <span>Status budget</span>
+            <strong>${withinBudget ? "Sesuai budget" : "Melebihi budget"}</strong>
+          </div>
+        </div>
       </div>
     `;
-  } catch (err) {
-    error.textContent = err.message;
-  }
-}
+  });
 
-$("#compareButton").addEventListener("click", compareProducts);
+  html += `
+    <div class="winner-note">
+      💡 ${escapeHTML(winner.name)} memiliki harga per ${escapeHTML(unit)}
+      paling rendah, yaitu ${formatRupiah(winner.unitPrice)}.
+    </div>
+  `;
+
+  $("#comparisonResultContent").innerHTML = html;
+  $("#comparisonResult").hidden = false;
+});
 
 $("#resetComparison").addEventListener("click", () => {
   for (let i = 1; i <= 3; i++) {
@@ -240,50 +197,37 @@ $("#resetComparison").addEventListener("click", () => {
     $(`#quantity${i}`).value = "";
   }
 
+  $("#unit").value = "pcs";
   $("#budget").value = "";
-  $("#unit").value = "gram";
-  $("#comparisonError").textContent = "";
-  $("#comparisonResult").innerHTML = "";
+  $("#comparisonResult").hidden = true;
+  $("#comparisonResultContent").innerHTML = "";
+  clearError("#comparisonError");
 });
 
-
-// =====================================
-// 3. SPLIT BILL
-// =====================================
+/* =========================
+   SPLIT BILL - MODE
+========================= */
 
 let splitMode = "equal";
 
-
-// Menyembunyikan hasil ketika input berubah
-function hideSplitResult() {
-  $("#splitResult").hidden = true;
-  $("#splitError").textContent = "";
-}
-
-
-// =====================================
-// MENGUBAH METODE SPLIT BILL
-// =====================================
-
-$$(".method-button").forEach(button => {
+$$(".method-button").forEach((button) => {
   button.addEventListener("click", () => {
     splitMode = button.dataset.mode;
 
-    $$(".method-button").forEach(btn => {
-      btn.classList.toggle("active", btn === button);
+    $$(".method-button").forEach((item) => {
+      item.classList.toggle("active", item === button);
     });
 
     $("#equalMode").hidden = splitMode !== "equal";
     $("#customMode").hidden = splitMode !== "custom";
-
-    hideSplitResult();
+    $("#splitResult").hidden = true;
+    clearError("#splitError");
   });
 });
 
-
-// =====================================
-// MEMBUAT ORANG UNTUK BAGI RATA
-// =====================================
+/* =========================
+   SPLIT BILL - BAGI RATA
+========================= */
 
 function createEqualPerson(name = "") {
   const row = document.createElement("div");
@@ -302,24 +246,49 @@ function createEqualPerson(name = "") {
   remove.setAttribute("aria-label", "Hapus orang");
 
   remove.addEventListener("click", () => {
-    if ($("#equalPeopleList").children.length <= 2) return;
-
     row.remove();
-    updateRemoveButtons("#equalPeopleList");
-    hideSplitResult();
+    updateEqualRemoveButtons();
   });
 
-  input.addEventListener("input", hideSplitResult);
-
   row.append(input, remove);
-
   return row;
 }
 
+function updateEqualRemoveButtons() {
+  const rows = $$("#equalPeopleList .person-row");
 
-// =====================================
-// MEMBUAT PESANAN PER ORANG
-// =====================================
+  rows.forEach((row) => {
+    const button = row.querySelector(".remove-person");
+    button.disabled = rows.length <= 2;
+    button.style.opacity = rows.length <= 2 ? "0.4" : "1";
+    button.style.cursor = rows.length <= 2 ? "not-allowed" : "pointer";
+  });
+}
+
+$("#addEqualPerson").addEventListener("click", () => {
+  $("#equalPeopleList").appendChild(createEqualPerson());
+  updateEqualRemoveButtons();
+});
+
+function getEqualPeople() {
+  const inputs = $$("#equalPeopleList .person-name");
+
+  return inputs.map((input) => input.value.trim());
+}
+
+function distributeAmount(total, count) {
+  const totalCents = Math.round(total * 100);
+  const base = Math.floor(totalCents / count);
+  const remainder = totalCents % count;
+
+  return Array.from({ length: count }, (_, index) =>
+    (base + (index < remainder ? 1 : 0)) / 100
+  );
+}
+
+/* =========================
+   SPLIT BILL - CUSTOM
+========================= */
 
 function createOrderRow(itemName = "", amount = "") {
   const row = document.createElement("div");
@@ -328,13 +297,13 @@ function createOrderRow(itemName = "", amount = "") {
   const nameInput = document.createElement("input");
   nameInput.type = "text";
   nameInput.className = "form-control order-name";
-  nameInput.placeholder = "Nama makanan/minuman";
+  nameInput.placeholder = "Nama pesanan";
   nameInput.value = itemName;
 
   const amountInput = document.createElement("input");
   amountInput.type = "number";
   amountInput.className = "form-control order-amount";
-  amountInput.placeholder = "Harga (Rp)";
+  amountInput.placeholder = "Harga";
   amountInput.min = "0";
   amountInput.value = amount;
 
@@ -344,34 +313,18 @@ function createOrderRow(itemName = "", amount = "") {
   removeButton.textContent = "×";
   removeButton.setAttribute("aria-label", "Hapus pesanan");
 
+  nameInput.addEventListener("input", updateCustomSubtotal);
+  amountInput.addEventListener("input", updateCustomSubtotal);
+
   removeButton.addEventListener("click", () => {
-    const orderList = row.parentElement;
-
-    if (orderList.children.length <= 1) return;
-
     row.remove();
-
-    updateOrderRemoveButtons(orderList);
+    updateOrderRemoveButtons(row.closest(".custom-person-card"));
     updateCustomSubtotal();
-    hideSplitResult();
-  });
-
-  nameInput.addEventListener("input", hideSplitResult);
-
-  amountInput.addEventListener("input", () => {
-    updateCustomSubtotal();
-    hideSplitResult();
   });
 
   row.append(nameInput, amountInput, removeButton);
-
   return row;
 }
-
-
-// =====================================
-// MEMBUAT KARTU SETIAP ORANG
-// =====================================
 
 function createCustomPerson(name = "") {
   const card = document.createElement("div");
@@ -393,46 +346,33 @@ function createCustomPerson(name = "") {
   removePerson.setAttribute("aria-label", "Hapus orang");
 
   removePerson.addEventListener("click", () => {
-    if ($("#customPeopleList").children.length <= 2) return;
-
     card.remove();
-
-    updateRemoveButtons("#customPeopleList");
+    updateCustomPersonRemoveButtons();
     updateCustomSubtotal();
-    hideSplitResult();
   });
 
   header.append(nameInput, removePerson);
 
   const orderList = document.createElement("div");
   orderList.className = "order-list";
-
-  // Setiap orang memiliki minimal satu pesanan
   orderList.appendChild(createOrderRow());
 
   const addOrderButton = document.createElement("button");
   addOrderButton.type = "button";
   addOrderButton.className = "add-order-button";
-  addOrderButton.textContent = "+ Tambah Pesanan";
+  addOrderButton.textContent = "＋ Tambah pesanan";
 
   addOrderButton.addEventListener("click", () => {
-    if (orderList.children.length >= 20) {
-      $("#splitError").textContent =
-        "Maksimal 20 pesanan untuk setiap orang.";
-      return;
-    }
-
     orderList.appendChild(createOrderRow());
-
-    updateOrderRemoveButtons(orderList);
-    hideSplitResult();
+    updateOrderRemoveButtons(card);
+    updateCustomSubtotal();
   });
 
   const personTotal = document.createElement("div");
   personTotal.className = "person-subtotal";
 
   const totalLabel = document.createElement("span");
-  totalLabel.textContent = "Total pesanan";
+  totalLabel.textContent = "Subtotal";
 
   const totalValue = document.createElement("strong");
   totalValue.className = "person-subtotal-value";
@@ -440,481 +380,325 @@ function createCustomPerson(name = "") {
 
   personTotal.append(totalLabel, totalValue);
 
-  nameInput.addEventListener("input", hideSplitResult);
-
-  card.append(
-    header,
-    orderList,
-    addOrderButton,
-    personTotal
-  );
+  card.append(header, orderList, addOrderButton, personTotal);
 
   return card;
 }
 
+function updateOrderRemoveButtons(card) {
+  if (!card) return;
 
-// =====================================
-// MENGATUR TOMBOL HAPUS ORANG
-// =====================================
+  const rows = [...card.querySelectorAll(".order-row")];
 
-function updateRemoveButtons(selector) {
-  const rows = $$(selector + " > div");
-
-  rows.forEach(row => {
-    const button = row.querySelector(".remove-person");
-
-    if (button) {
-      button.disabled = rows.length <= 2;
-    }
-  });
-}
-
-
-// =====================================
-// MENGATUR TOMBOL HAPUS PESANAN
-// =====================================
-
-function updateOrderRemoveButtons(orderList) {
-  const rows = [...orderList.children];
-
-  rows.forEach(row => {
+  rows.forEach((row) => {
     const button = row.querySelector(".remove-order");
-
-    if (button) {
-      button.disabled = rows.length <= 1;
-    }
+    button.disabled = rows.length <= 1;
+    button.style.opacity = rows.length <= 1 ? "0.4" : "1";
+    button.style.cursor = rows.length <= 1 ? "not-allowed" : "pointer";
   });
 }
 
+function updateCustomPersonRemoveButtons() {
+  const cards = $$("#customPeopleList .custom-person-card");
 
-// =====================================
-// MENGHITUNG TOTAL PESANAN
-// =====================================
+  cards.forEach((card) => {
+    const button = card.querySelector(".custom-person-header .remove-person");
+    button.disabled = cards.length <= 2;
+    button.style.opacity = cards.length <= 2 ? "0.4" : "1";
+    button.style.cursor = cards.length <= 2 ? "not-allowed" : "pointer";
+  });
+}
+
+function getPersonSubtotal(card) {
+  return [...card.querySelectorAll(".order-amount")].reduce((sum, input) => {
+    return sum + (input.value === "" ? 0 : Number(input.value));
+  }, 0);
+}
 
 function updateCustomSubtotal() {
   const cards = $$("#customPeopleList .custom-person-card");
-  let grandSubtotal = 0;
+  let grandTotal = 0;
 
-  cards.forEach(card => {
-    const amounts = [...card.querySelectorAll(".order-amount")];
+  cards.forEach((card) => {
+    const subtotal = getPersonSubtotal(card);
+    grandTotal += subtotal;
 
-    const personTotal = amounts.reduce((sum, input) => {
-      const value = input.value === "" ? 0 : Number(input.value);
-
-      return sum + (
-        Number.isFinite(value) && value > 0 ? value : 0
-      );
-    }, 0);
-
-    card.querySelector(".person-subtotal-value").textContent =
-      formatRupiah(personTotal);
-
-    grandSubtotal += personTotal;
+    const value = card.querySelector(".person-subtotal-value");
+    value.textContent = formatRupiah(subtotal);
   });
 
-  $("#customSubtotal").textContent = formatRupiah(grandSubtotal);
+  $("#customSubtotal").textContent = formatRupiah(grandTotal);
 }
-
-
-// =====================================
-// TOMBOL TAMBAH ORANG
-// =====================================
-
-$("#addEqualPerson").addEventListener("click", () => {
-  const list = $("#equalPeopleList");
-
-  if (list.children.length >= 30) {
-    $("#splitError").textContent = "Maksimal 30 orang.";
-    return;
-  }
-
-  list.appendChild(
-    createEqualPerson(`Orang ${list.children.length + 1}`)
-  );
-
-  updateRemoveButtons("#equalPeopleList");
-  hideSplitResult();
-});
-
 
 $("#addCustomPerson").addEventListener("click", () => {
-  const list = $("#customPeopleList");
-
-  if (list.children.length >= 30) {
-    $("#splitError").textContent = "Maksimal 30 orang.";
-    return;
-  }
-
-  list.appendChild(
-    createCustomPerson(`Orang ${list.children.length + 1}`)
-  );
-
-  updateRemoveButtons("#customPeopleList");
+  $("#customPeopleList").appendChild(createCustomPerson());
+  updateCustomPersonRemoveButtons();
   updateCustomSubtotal();
-  hideSplitResult();
 });
-
-
-// =====================================
-// MENGAMBIL DATA BAGI RATA
-// =====================================
-
-function getEqualPeople() {
-  const rows = $$("#equalPeopleList .person-row");
-
-  if (rows.length < 2) {
-    throw new Error("Minimal harus ada dua orang.");
-  }
-
-  return rows.map((row, index) => {
-    const name = row.querySelector(".person-name").value.trim();
-
-    return {
-      name: name || `Orang ${index + 1}`,
-      subtotal: 1
-    };
-  });
-}
-
-
-// =====================================
-// MENGAMBIL DATA PESANAN SETIAP ORANG
-// =====================================
 
 function getCustomPeople() {
   const cards = $$("#customPeopleList .custom-person-card");
 
-  if (cards.length < 2) {
-    throw new Error("Minimal harus ada dua orang.");
-  }
-
-  return cards.map((card, index) => {
+  return cards.map((card) => {
     const name = card.querySelector(".custom-name").value.trim();
+    const rows = [...card.querySelectorAll(".order-row")];
 
-    const orderRows = [...card.querySelectorAll(".order-row")];
-
-    const orders = orderRows.map((row, orderIndex) => {
-      const itemName = row.querySelector(".order-name").value.trim();
-      const amountText = row.querySelector(".order-amount").value;
-
-      const personName = name || `Orang ${index + 1}`;
-
-      if (!itemName) {
-        throw new Error(
-          `Masukkan nama pesanan ke-${orderIndex + 1} untuk ${personName}.`
-        );
-      }
-
-      if (amountText === "") {
-        throw new Error(`Masukkan harga ${itemName}.`);
-      }
-
-      const amount = Number(amountText);
-
-      if (!Number.isFinite(amount) || amount <= 0) {
-        throw new Error(`Harga ${itemName} harus lebih dari 0.`);
-      }
-
-      return {
-        itemName,
-        amount
-      };
-    });
-
-    const subtotal = orders.reduce(
-      (sum, order) => sum + order.amount,
-      0
-    );
+    const orders = rows.map((row) => ({
+      name: row.querySelector(".order-name").value.trim(),
+      amount: row.querySelector(".order-amount").value === ""
+        ? 0
+        : Number(row.querySelector(".order-amount").value)
+    }));
 
     return {
-      name: name || `Orang ${index + 1}`,
+      name,
       orders,
-      subtotal
+      subtotal: orders.reduce((sum, order) => sum + order.amount, 0)
     };
   });
 }
 
-
-// =====================================
-// PEMBAGIAN NOMINAL DAN PEMBULATAN
-// =====================================
-
-function distributeAmount(total, weights) {
-  const weightTotal = weights.reduce((sum, value) => sum + value, 0);
-
-  if (weightTotal <= 0) {
-    throw new Error("Total pesanan harus lebih dari 0.");
-  }
-
-  const exactAmounts = weights.map(
-    weight => total * weight / weightTotal
-  );
-
-  const amounts = exactAmounts.map(value => Math.floor(value));
-
-  let remainder =
-    total - amounts.reduce((sum, value) => sum + value, 0);
-
-  const fractions = exactAmounts
-    .map((value, index) => ({
-      index,
-      fraction: value - Math.floor(value)
-    }))
-    .sort((a, b) => b.fraction - a.fraction);
-
-  for (let i = 0; i < remainder; i++) {
-    amounts[fractions[i % fractions.length].index]++;
-  }
-
-  return amounts;
-}
-
-
-// =====================================
-// MENGHITUNG SPLIT BILL
-// =====================================
+/* =========================
+   HITUNG SPLIT BILL
+========================= */
 
 function calculateSplitBill() {
-  const error = $("#splitError");
-  const result = $("#splitResult");
+  clearError("#splitError");
+  $("#splitResult").hidden = true;
 
-  error.textContent = "";
-  result.hidden = true;
+  const extraValue = $("#extraFee").value;
+  const extra = extraValue === "" ? 0 : Number(extraValue);
 
-  try {
-    const extraText = $("#extraFee").value;
-    const extraFee = extraText === "" ? 0 : Number(extraText);
+  if (!Number.isFinite(extra) || extra < 0) {
+    showError("#splitError", "Biaya tambahan tidak boleh negatif.");
+    return;
+  }
 
-    if (!Number.isFinite(extraFee) || extraFee < 0) {
-      throw new Error("Biaya tambahan tidak boleh negatif.");
-    }
+  const billName = $("#billName").value.trim() || "Tagihan bersama";
 
-    let people;
-    let subtotal;
+  let people = [];
+  let subtotal = 0;
+  let methodText = "";
 
-    // MODE BAGI RATA
-    if (splitMode === "equal") {
-      people = getEqualPeople();
+  if (splitMode === "equal") {
+    const names = getEqualPeople();
+    const totalValue = $("#equalTotal").value;
 
-      const totalText = $("#equalTotal").value;
-
-      if (totalText === "") {
-        throw new Error("Masukkan total tagihan terlebih dahulu.");
-      }
-
-      subtotal = Number(totalText);
-
-      if (!Number.isFinite(subtotal) || subtotal <= 0) {
-        throw new Error("Total tagihan harus lebih dari 0.");
-      }
-
-      const grandTotal = subtotal + extraFee;
-
-      const shares = distributeAmount(
-        grandTotal,
-        people.map(() => 1)
-      );
-
-      people = people.map((person, index) => ({
-        ...person,
-        payment: shares[index],
-        orderAmount: 0
-      }));
-
-      renderSplitResult({
-        people,
-        subtotal,
-        extraFee,
-        grandTotal,
-        method: "Dibagi rata"
-      });
-
+    if (names.length < 2) {
+      showError("#splitError", "Minimal harus ada dua orang.");
       return;
     }
 
-    // MODE SESUAI PESANAN
-    people = getCustomPeople();
-
-    subtotal = people.reduce(
-      (sum, person) => sum + person.subtotal,
-      0
-    );
-
-    if (subtotal <= 0) {
-      throw new Error("Total pesanan harus lebih dari 0.");
+    if (names.some((name) => name === "")) {
+      showError("#splitError", "Isi nama semua orang terlebih dahulu.");
+      return;
     }
 
-    const grandTotal = subtotal + extraFee;
+    if (new Set(names.map((name) => name.toLowerCase())).size !== names.length) {
+      showError("#splitError", "Gunakan nama yang berbeda untuk setiap orang.");
+      return;
+    }
 
-    // Biaya tambahan dibagi secara proporsional
-    const extraShares = distributeAmount(
-      extraFee,
-      people.map(person => person.subtotal)
-    );
+    if (totalValue === "") {
+      showError("#splitError", "Masukkan total tagihan terlebih dahulu.");
+      return;
+    }
 
-    people = people.map((person, index) => ({
-      ...person,
-      payment: person.subtotal + extraShares[index],
-      orderAmount: person.subtotal,
-      extraShare: extraShares[index]
+    subtotal = Number(totalValue);
+
+    if (!Number.isFinite(subtotal) || subtotal <= 0) {
+      showError("#splitError", "Total tagihan harus lebih dari 0.");
+      return;
+    }
+
+    const grandTotal = subtotal + extra;
+    const shares = distributeAmount(grandTotal, names.length);
+
+    people = names.map((name, index) => ({
+      name,
+      amount: shares[index],
+      detail: "Bagian tagihan"
     }));
 
-    renderSplitResult({
-      people,
-      subtotal,
-      extraFee,
-      grandTotal,
-      method: "Sesuai pesanan"
-    });
+    methodText = "Dibagi rata";
+  } else {
+    const customPeople = getCustomPeople();
 
-  } catch (err) {
-    error.textContent = err.message;
-  }
-}
-
-
-// =====================================
-// MENAMPILKAN HASIL SPLIT BILL
-// =====================================
-
-function renderSplitResult(data) {
-  const {
-    people,
-    subtotal,
-    extraFee,
-    grandTotal,
-    method
-  } = data;
-
-  $("#resultBillName").textContent =
-    $("#billName").value.trim() || "Rincian Tagihan";
-
-  $("#resultGrandTotal").textContent = formatRupiah(grandTotal);
-  $("#resultMethod").textContent = `Metode: ${method}`;
-  $("#resultSubtotal").textContent = formatRupiah(subtotal);
-  $("#resultExtra").textContent = formatRupiah(extraFee);
-  $("#resultPeople").textContent = `${people.length} orang`;
-
-  const totalPayment = people.reduce(
-    (sum, person) => sum + person.payment,
-    0
-  );
-
-  $("#resultCheckTotal").textContent = formatRupiah(totalPayment);
-
-  const breakdown = people.map(person => {
-    let detail = "";
-
-    if (method === "Sesuai pesanan") {
-      const orderDetails = person.orders.map(order => `
-        <div class="order-detail">
-          <span>${escapeHTML(order.itemName)}</span>
-          <span>${formatRupiah(order.amount)}</span>
-        </div>
-      `).join("");
-
-      detail = `
-        <div class="order-details">
-          ${orderDetails}
-          <small>
-            Total pesanan: ${formatRupiah(person.orderAmount)}
-            <br>
-            Biaya tambahan: ${formatRupiah(person.extraShare)}
-          </small>
-        </div>
-      `;
-    } else {
-      detail = `<small>Bagian dari total tagihan</small>`;
+    if (customPeople.length < 2) {
+      showError("#splitError", "Tambahkan minimal dua orang.");
+      return;
     }
 
-    return `
-      <div class="split-person-result">
-        <div>
-          <span>${escapeHTML(person.name)}</span>
-          ${detail}
-        </div>
-        <strong>${formatRupiah(person.payment)}</strong>
-      </div>
-    `;
-  }).join("");
+    if (customPeople.some((person) => person.name === "")) {
+      showError("#splitError", "Isi nama semua orang terlebih dahulu.");
+      return;
+    }
 
-  $("#splitBreakdown").innerHTML = breakdown;
+    if (new Set(customPeople.map((person) => person.name.toLowerCase())).size !== customPeople.length) {
+      showError("#splitError", "Gunakan nama yang berbeda untuk setiap orang.");
+      return;
+    }
+
+    for (const person of customPeople) {
+      if (person.orders.length === 0 ||
+          person.orders.some((order) => order.name === "")) {
+        showError("#splitError", `Lengkapi nama pesanan milik ${person.name}.`);
+        return;
+      }
+
+      if (person.orders.some((order) => !Number.isFinite(order.amount) || order.amount < 0)) {
+        showError("#splitError", `Periksa harga pesanan milik ${person.name}.`);
+        return;
+      }
+    }
+
+    subtotal = customPeople.reduce((sum, person) => sum + person.subtotal, 0);
+
+    if (subtotal <= 0) {
+      showError("#splitError", "Masukkan minimal satu harga pesanan yang lebih dari 0.");
+      return;
+    }
+
+    const grandTotal = subtotal + extra;
+
+    // Biaya tambahan dibagi berdasarkan proporsi subtotal pesanan.
+    const totalCents = Math.round(grandTotal * 100);
+    const subtotalCents = Math.round(subtotal * 100);
+
+    const rawShares = customPeople.map((person) => {
+      return totalCents * Math.round(person.subtotal * 100) / subtotalCents;
+    });
+
+    const sharesCents = rawShares.map(Math.floor);
+    let remainder = totalCents - sharesCents.reduce((sum, value) => sum + value, 0);
+
+    const order = rawShares
+      .map((value, index) => ({
+        index,
+        remainder: value - Math.floor(value)
+      }))
+      .sort((a, b) => b.remainder - a.remainder);
+
+    for (let i = 0; i < remainder; i++) {
+      sharesCents[order[i].index]++;
+    }
+
+    people = customPeople.map((person, index) => ({
+      name: person.name,
+      amount: sharesCents[index] / 100,
+      detail: person.orders.map((item) => item.name).join(", ")
+    }));
+
+    methodText = "Sesuai pesanan + pembagian biaya tambahan proporsional";
+  }
+
+  const grandTotal = subtotal + extra;
+
+  renderSplitResult({
+    billName,
+    subtotal,
+    extra,
+    grandTotal,
+    people,
+    methodText
+  });
+}
+
+/* =========================
+   TAMPILKAN HASIL
+========================= */
+
+function renderSplitResult(data) {
+  $("#resultBillName").textContent = data.billName;
+  $("#resultGrandTotal").textContent = formatRupiah(data.grandTotal);
+  $("#resultMethod").textContent = data.methodText;
+  $("#resultSubtotal").textContent = formatRupiah(data.subtotal);
+  $("#resultExtra").textContent = formatRupiah(data.extra);
+
+  const breakdown = $("#splitBreakdown");
+  breakdown.innerHTML = "";
+
+  data.people.forEach((person) => {
+    const row = document.createElement("div");
+    row.className = "breakdown-person";
+
+    const name = document.createElement("span");
+    name.textContent = person.name;
+
+    const amount = document.createElement("strong");
+    amount.textContent = formatRupiah(person.amount);
+
+    row.append(name, amount);
+
+    if (splitMode === "custom") {
+      const detail = document.createElement("small");
+      detail.textContent = person.detail;
+      detail.style.display = "block";
+      detail.style.color = "#8290a7";
+      detail.style.fontSize = "10px";
+      detail.style.marginTop = "4px";
+      name.appendChild(detail);
+    }
+
+    breakdown.appendChild(row);
+  });
+
+  const checkTotal = data.people.reduce((sum, person) => sum + person.amount, 0);
+  $("#resultCheckTotal").textContent = formatRupiah(checkTotal);
+
   $("#splitResult").hidden = false;
 }
 
+/* =========================
+   RESET SPLIT BILL
+========================= */
 
-// =====================================
-// TOMBOL HITUNG
-// =====================================
-
-$("#calculateSplit").addEventListener("click", calculateSplitBill);
-
-
-// =====================================
-// INPUT BERUBAH = HASIL DISEMBUNYIKAN
-// =====================================
-
-$("#equalTotal").addEventListener("input", hideSplitResult);
-$("#extraFee").addEventListener("input", hideSplitResult);
-$("#billName").addEventListener("input", hideSplitResult);
-
-$("#equalPeopleList").addEventListener("input", hideSplitResult);
-
-
-// =====================================
-// RESET SPLIT BILL
-// =====================================
-
-$("#resetSplit").addEventListener("click", () => {
+function resetSplitBill() {
   $("#billName").value = "";
-  $("#extraFee").value = "0";
+  $("#extraFee").value = "";
   $("#equalTotal").value = "";
 
   $("#equalPeopleList").innerHTML = "";
-
   $("#equalPeopleList").append(
-    createEqualPerson("Orang 1"),
-    createEqualPerson("Orang 2")
+    createEqualPerson(),
+    createEqualPerson()
   );
+  updateEqualRemoveButtons();
 
   $("#customPeopleList").innerHTML = "";
-
   $("#customPeopleList").append(
-    createCustomPerson("Orang 1"),
-    createCustomPerson("Orang 2")
+    createCustomPerson(),
+    createCustomPerson()
   );
-
-  $("#splitError").textContent = "";
-  $("#splitResult").hidden = true;
-
-  updateRemoveButtons("#equalPeopleList");
-  updateRemoveButtons("#customPeopleList");
+  updateCustomPersonRemoveButtons();
   updateCustomSubtotal();
 
   splitMode = "equal";
 
-  $$(".method-button").forEach(button => {
-    button.classList.toggle(
-      "active",
-      button.dataset.mode === "equal"
-    );
+  $$(".method-button").forEach((button) => {
+    button.classList.toggle("active", button.dataset.mode === "equal");
   });
 
   $("#equalMode").hidden = false;
   $("#customMode").hidden = true;
-});
+  $("#splitResult").hidden = true;
 
+  clearError("#splitError");
+}
 
-// =====================================
-// INISIALISASI AWAL
-// =====================================
+$("#calculateSplit").addEventListener("click", calculateSplitBill);
+$("#resetSplit").addEventListener("click", resetSplitBill);
 
-// Membuat dua orang pertama untuk mode sesuai pesanan
+/* =========================
+   INISIALISASI
+========================= */
+
+updateEqualRemoveButtons();
+
 $("#customPeopleList").append(
-  createCustomPerson("Orang 1"),
-  createCustomPerson("Orang 2")
+  createCustomPerson(),
+  createCustomPerson()
 );
 
-updateRemoveButtons("#equalPeopleList");
-updateRemoveButtons("#customPeopleList");
+updateCustomPersonRemoveButtons();
 updateCustomSubtotal();
