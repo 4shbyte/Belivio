@@ -4,405 +4,1202 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Belivio - Smart Shopping Assistant</title>
 
+  <!-- GOOGLE FONT -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- BOOTSTRAP -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- CSS -->
   <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
 
-<!-- NAVBAR -->
+<!-- =====================================
+     NAVBAR
+===================================== -->
+
 <nav class="navbar navbar-expand-lg sticky-top">
   <div class="container">
-    <a class="navbar-brand" href="#home">beli<span>vio.</span></a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-      data-bs-target="#navbarMenu">
+    <a class="navbar-brand" href="#home">
+      beli<span>vio.</span>
+    </a>
+
+    <button class="navbar-toggler" type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarMenu"
+      aria-controls="navbarMenu"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div class="collapse navbar-collapse" id="navbarMenu">
       <ul class="navbar-nav ms-auto align-items-lg-center">
+
         <li class="nav-item">
           <a class="nav-link" href="#home">Beranda</a>
         </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#features">Fitur</a>
+        </li>
+
         <li class="nav-item">
           <a class="nav-link" href="#discount">Kalkulator Diskon</a>
         </li>
+
         <li class="nav-item">
           <a class="nav-link" href="#comparison">Bandingkan Produk</a>
         </li>
+
         <li class="nav-item">
           <a class="nav-link" href="#splitbill">Split Bill</a>
         </li>
+
       </ul>
     </div>
   </div>
 </nav>
 
-<!-- HERO -->
+
+<!-- =====================================
+     HERO SECTION
+===================================== -->
+
 <header class="hero" id="home">
+
   <div class="container">
-    <div class="hero-content">
-      <span class="hero-label">SMART SHOPPING ASSISTANT</span>
-      <h1>Belanja Lebih Cerdas,<br>Pilih Lebih Bijak.</h1>
-      <p>
-        Bantu hitung diskon, bandingkan harga produk,
-        dan bagi tagihan dengan lebih mudah bersama Belivio.
-      </p>
-      <a href="#features" class="btn btn-primary-custom">Mulai Sekarang</a>
+
+    <div class="hero-layout">
+
+      <!-- HERO TEXT -->
+
+      <div class="hero-content">
+
+        <span class="hero-label">
+          ✨ YOUR SMART SHOPPING BUDDY
+        </span>
+
+        <h1>
+          Belanja Lebih Cerdas,
+          <span>Pilih Lebih Bijak.</span>
+        </h1>
+
+        <p>
+          Bantu hitung diskon, bandingkan harga produk,
+          dan bagi tagihan dengan lebih mudah bersama Belivio.
+        </p>
+
+        <div class="hero-actions">
+
+          <a href="#features" class="btn btn-primary-custom">
+            Mulai Sekarang ✨
+          </a>
+
+          <span class="hero-note">
+            Smart shopping starts here!
+          </span>
+
+        </div>
+
+        <div class="hero-mini-info">
+
+          <div>🏷️ Hitung Diskon</div>
+          <div>🛍️ Bandingkan Produk</div>
+          <div>🧾 Bagi Tagihan</div>
+
+        </div>
+
+      </div>
+
+
+      <!-- HERO ILLUSTRATION -->
+
+      <div class="hero-visual">
+
+        <div class="hero-circle circle-one"></div>
+        <div class="hero-circle circle-two"></div>
+
+        <div class="floating-object shopping-bag">🛍️</div>
+        <div class="floating-object coin-object">🪙</div>
+        <div class="floating-object star-object">⭐</div>
+        <div class="floating-object heart-object">💙</div>
+        <div class="floating-object tag-object">-20%</div>
+        <div class="floating-object sparkle-object">✦</div>
+
+        <div class="hero-product-card">
+
+          <div class="product-card-top">
+            <span>YOUR SHOPPING DAY</span>
+            <span>💙</span>
+          </div>
+
+          <div class="hero-product-illustration">
+            🛒
+          </div>
+
+          <h4>Shop Smart!</h4>
+
+          <p>Make every purchase count.</p>
+
+          <div class="fake-price">
+            <span>Original price</span>
+            <strong>Rp100.000</strong>
+          </div>
+
+          <div class="fake-price discount-price">
+            <span>After discount</span>
+            <strong>Rp80.000 🎉</strong>
+          </div>
+
+        </div>
+
+        <div class="hero-sticker sticker-left">
+          GOOD DEAL!
+        </div>
+
+        <div class="hero-sticker sticker-right">
+          ✨ SMART BUY ✨
+        </div>
+
+      </div>
+
     </div>
+
   </div>
+
 </header>
 
-<!-- INTRO -->
+
+<!-- =====================================
+     INTRO / FITUR
+===================================== -->
+
 <section class="section-padding" id="features">
+
   <div class="container">
+
     <div class="section-heading text-center">
-      <span class="eyebrow">FITUR BELIVIO</span>
-      <h2>Semua perhitungan dalam satu tempat</h2>
-      <p>Pilih fitur yang kamu butuhkan untuk membantu aktivitas sehari-hari.</p>
+
+      <span class="eyebrow">
+        ✨ FITUR BELIVIO
+      </span>
+
+      <h2>
+        Semua perhitungan dalam satu tempat
+      </h2>
+
+      <p>
+        Pilih fitur yang kamu butuhkan untuk membantu aktivitas sehari-hari.
+      </p>
+
+      <div class="heading-decoration">
+        <span>✦</span>
+        <span>✧</span>
+        <span>•</span>
+      </div>
+
     </div>
+
 
     <div class="row g-4">
+
+      <!-- FITUR 1 -->
+
       <div class="col-md-4">
+
         <div class="feature-card">
-          <div class="feature-icon">%</div>
+
+          <div class="feature-icon icon-discount">
+            🏷️
+          </div>
+
           <h5>Kalkulator Diskon</h5>
-          <p>Hitung harga akhir dan nominal potongan harga suatu produk.</p>
-          <a href="#discount">Gunakan fitur →</a>
+
+          <p>
+            Hitung harga akhir dan nominal potongan harga suatu produk.
+          </p>
+
+          <a href="#discount">
+            Gunakan fitur →
+          </a>
+
         </div>
+
       </div>
 
+
+      <!-- FITUR 2 -->
+
       <div class="col-md-4">
+
         <div class="feature-card">
-          <div class="feature-icon">⇄</div>
+
+          <div class="feature-icon icon-compare">
+            🛍️
+          </div>
+
           <h5>Perbandingan Produk</h5>
-          <p>Bandingkan harga produk untuk mengetahui pilihan yang lebih ekonomis.</p>
-          <a href="#comparison">Gunakan fitur →</a>
+
+          <p>
+            Bandingkan harga produk untuk mengetahui pilihan yang lebih ekonomis.
+          </p>
+
+          <a href="#comparison">
+            Gunakan fitur →
+          </a>
+
         </div>
+
       </div>
 
+
+      <!-- FITUR 3 -->
+
       <div class="col-md-4">
+
         <div class="feature-card">
-          <div class="feature-icon">÷</div>
+
+          <div class="feature-icon icon-split">
+            🧾
+          </div>
+
           <h5>Split Bill</h5>
-          <p>Hitung pembagian tagihan bersama teman atau keluarga.</p>
-          <a href="#splitbill">Gunakan fitur →</a>
+
+          <p>
+            Hitung pembagian tagihan bersama teman atau keluarga.
+          </p>
+
+          <a href="#splitbill">
+            Gunakan fitur →
+          </a>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
+
 </section>
 
-<!-- KALKULATOR DISKON -->
+
+
+<!-- =====================================
+     KALKULATOR DISKON
+===================================== -->
+
 <section class="section-padding section-soft" id="discount">
+
   <div class="container">
+
     <div class="section-heading">
-      <span class="eyebrow">FITUR 01</span>
-      <h2>Kalkulator Diskon</h2>
-      <p>Masukkan harga awal dan persentase diskon untuk mengetahui harga akhirnya.</p>
+
+      <span class="eyebrow">
+        🏷️ FITUR 01
+      </span>
+
+      <h2>
+        Kalkulator Diskon
+      </h2>
+
+      <p>
+        Masukkan harga awal dan persentase diskon untuk mengetahui harga akhirnya.
+      </p>
+
+      <div class="heading-decoration">
+        <span>✦</span>
+        <span>✧</span>
+        <span>•</span>
+      </div>
+
     </div>
 
-    <div class="calculator-card">
-      <div class="row g-4">
-        <div class="col-md-6">
-          <label class="form-label">Harga Awal (Rp)</label>
-          <input type="number" id="discountPrice" class="form-control"
-            placeholder="Contoh: 100000" min="0">
 
-          <label class="form-label mt-3">Diskon (%)</label>
-          <input type="number" id="discountPercent" class="form-control"
-            placeholder="Contoh: 20" min="0" max="100">
+    <div class="calculator-card">
+
+      <div class="row g-4">
+
+        <!-- INPUT DISKON -->
+
+        <div class="col-md-6">
+
+          <div class="mb-3">
+
+            <label class="form-label">
+              💰 Harga Awal (Rp)
+            </label>
+
+            <input
+              type="number"
+              id="discountPrice"
+              class="form-control"
+              placeholder="Contoh: 100000"
+              min="0"
+            >
+
+          </div>
+
+
+          <div class="mb-3">
+
+            <label class="form-label">
+              🏷️ Diskon (%)
+            </label>
+
+            <input
+              type="number"
+              id="discountPercent"
+              class="form-control"
+              placeholder="Contoh: 20"
+              min="0"
+              max="100"
+            >
+
+          </div>
+
 
           <div class="d-flex gap-2 mt-4">
-            <button class="btn btn-primary-custom" id="calculateDiscount">
-              Hitung Diskon
+
+            <button
+              class="btn btn-primary-custom"
+              id="calculateDiscount"
+              type="button">
+
+              Hitung Diskon ✨
+
             </button>
-            <button class="btn btn-outline-custom" id="resetDiscount">
+
+            <button
+              class="btn btn-outline-custom"
+              id="resetDiscount"
+              type="button">
+
               Reset
+
             </button>
+
           </div>
 
           <p class="error-message" id="discountError"></p>
+
         </div>
 
+
+        <!-- HASIL DISKON -->
+
         <div class="col-md-6">
+
           <div class="result-panel" id="discountResult">
-            <span class="result-caption">HARGA SETELAH DISKON</span>
+
+            <span class="result-caption">
+              🎉 HARGA SETELAH DISKON
+            </span>
+
             <h3>Rp0</h3>
-            <p>Hasil perhitungan akan muncul di sini.</p>
+
+            <p>
+              Hasil perhitungan akan muncul di sini.
+            </p>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
+
 </section>
 
-<!-- PERBANDINGAN PRODUK -->
+
+
+<!-- =====================================
+     PERBANDINGAN PRODUK
+===================================== -->
+
 <section class="section-padding" id="comparison">
+
   <div class="container">
+
     <div class="section-heading">
-      <span class="eyebrow">FITUR 02</span>
-      <h2>Bandingkan Produk</h2>
-      <p>Masukkan produk yang ingin dibandingkan dan temukan harga per satuan yang lebih hemat.</p>
+
+      <span class="eyebrow">
+        🛍️ FITUR 02
+      </span>
+
+      <h2>
+        Bandingkan Produk
+      </h2>
+
+      <p>
+        Masukkan produk yang ingin dibandingkan dan temukan harga per satuan yang lebih hemat.
+      </p>
+
+      <div class="heading-decoration">
+        <span>✦</span>
+        <span>✧</span>
+        <span>•</span>
+      </div>
+
     </div>
 
+
     <div class="calculator-card">
+
+
+      <!-- SATUAN DAN BUDGET -->
+
       <div class="row g-3 mb-3">
+
         <div class="col-md-6">
-          <label class="form-label">Satuan Produk</label>
+
+          <label class="form-label">
+            📦 Satuan Produk
+          </label>
+
           <select id="unit" class="form-select">
+
             <option value="gram">Gram (g)</option>
             <option value="kg">Kilogram (kg)</option>
             <option value="ml">Mililiter (ml)</option>
             <option value="liter">Liter (L)</option>
             <option value="pcs">Pcs</option>
+
           </select>
+
         </div>
+
 
         <div class="col-md-6">
-          <label class="form-label">Budget (Opsional)</label>
-          <input type="number" id="budget" class="form-control"
-            placeholder="Masukkan budget (Rp)" min="0">
+
+          <label class="form-label">
+            💰 Budget (Opsional)
+          </label>
+
+          <input
+            type="number"
+            id="budget"
+            class="form-control"
+            placeholder="Masukkan budget (Rp)"
+            min="0"
+          >
+
         </div>
+
       </div>
+
+
+
+      <!-- INPUT PRODUK -->
 
       <div class="row g-3">
-        <div class="col-md-4">
-          <div class="product-input-card">
-            <h5>Produk A</h5>
-            <label class="form-label">Nama Produk</label>
-            <input id="name1" class="form-control" placeholder="Nama produk">
 
-            <label class="form-label mt-2">Harga (Rp)</label>
-            <input id="price1" type="number" class="form-control" placeholder="Harga">
 
-            <label class="form-label mt-2">Diskon (%)</label>
-            <input id="discount1" type="number" class="form-control" placeholder="0" min="0" max="100">
-
-            <label class="form-label mt-2">Jumlah / Ukuran</label>
-            <input id="quantity1" type="number" class="form-control" placeholder="Contoh: 500">
-          </div>
-        </div>
+        <!-- PRODUK A -->
 
         <div class="col-md-4">
+
           <div class="product-input-card">
-            <h5>Produk B</h5>
-            <label class="form-label">Nama Produk</label>
-            <input id="name2" class="form-control" placeholder="Nama produk">
 
-            <label class="form-label mt-2">Harga (Rp)</label>
-            <input id="price2" type="number" class="form-control" placeholder="Harga">
+            <h5>
+              🩵 Produk A
+            </h5>
 
-            <label class="form-label mt-2">Diskon (%)</label>
-            <input id="discount2" type="number" class="form-control" placeholder="0" min="0" max="100">
+            <label class="form-label">
+              Nama Produk
+            </label>
 
-            <label class="form-label mt-2">Jumlah / Ukuran</label>
-            <input id="quantity2" type="number" class="form-control" placeholder="Contoh: 500">
+            <input
+              id="name1"
+              class="form-control"
+              placeholder="Nama produk"
+            >
+
+            <label class="form-label mt-2">
+              Harga (Rp)
+            </label>
+
+            <input
+              id="price1"
+              type="number"
+              class="form-control"
+              placeholder="Harga"
+            >
+
+            <label class="form-label mt-2">
+              Diskon (%)
+            </label>
+
+            <input
+              id="discount1"
+              type="number"
+              class="form-control"
+              placeholder="0"
+              min="0"
+              max="100"
+            >
+
+            <label class="form-label mt-2">
+              Jumlah / Ukuran
+            </label>
+
+            <input
+              id="quantity1"
+              type="number"
+              class="form-control"
+              placeholder="Contoh: 500"
+            >
+
           </div>
+
         </div>
+
+
+
+        <!-- PRODUK B -->
 
         <div class="col-md-4">
+
           <div class="product-input-card">
-            <h5>Produk C <small>(Opsional)</small></h5>
-            <label class="form-label">Nama Produk</label>
-            <input id="name3" class="form-control" placeholder="Nama produk">
 
-            <label class="form-label mt-2">Harga (Rp)</label>
-            <input id="price3" type="number" class="form-control" placeholder="Harga">
+            <h5>
+              💛 Produk B
+            </h5>
 
-            <label class="form-label mt-2">Diskon (%)</label>
-            <input id="discount3" type="number" class="form-control" placeholder="0" min="0" max="100">
+            <label class="form-label">
+              Nama Produk
+            </label>
 
-            <label class="form-label mt-2">Jumlah / Ukuran</label>
-            <input id="quantity3" type="number" class="form-control" placeholder="Contoh: 500">
+            <input
+              id="name2"
+              class="form-control"
+              placeholder="Nama produk"
+            >
+
+            <label class="form-label mt-2">
+              Harga (Rp)
+            </label>
+
+            <input
+              id="price2"
+              type="number"
+              class="form-control"
+              placeholder="Harga"
+            >
+
+            <label class="form-label mt-2">
+              Diskon (%)
+            </label>
+
+            <input
+              id="discount2"
+              type="number"
+              class="form-control"
+              placeholder="0"
+              min="0"
+              max="100"
+            >
+
+            <label class="form-label mt-2">
+              Jumlah / Ukuran
+            </label>
+
+            <input
+              id="quantity2"
+              type="number"
+              class="form-control"
+              placeholder="Contoh: 500"
+            >
+
           </div>
+
         </div>
+
+
+
+        <!-- PRODUK C -->
+
+        <div class="col-md-4">
+
+          <div class="product-input-card">
+
+            <h5>
+              💜 Produk C
+              <small>(Opsional)</small>
+            </h5>
+
+            <label class="form-label">
+              Nama Produk
+            </label>
+
+            <input
+              id="name3"
+              class="form-control"
+              placeholder="Nama produk"
+            >
+
+            <label class="form-label mt-2">
+              Harga (Rp)
+            </label>
+
+            <input
+              id="price3"
+              type="number"
+              class="form-control"
+              placeholder="Harga"
+            >
+
+            <label class="form-label mt-2">
+              Diskon (%)
+            </label>
+
+            <input
+              id="discount3"
+              type="number"
+              class="form-control"
+              placeholder="0"
+              min="0"
+              max="100"
+            >
+
+            <label class="form-label mt-2">
+              Jumlah / Ukuran
+            </label>
+
+            <input
+              id="quantity3"
+              type="number"
+              class="form-control"
+              placeholder="Contoh: 500"
+            >
+
+          </div>
+
+        </div>
+
       </div>
+
+
+
+      <!-- BUTTON PERBANDINGAN -->
 
       <div class="d-flex gap-2 mt-4">
-        <button class="btn btn-primary-custom" id="compareButton">Bandingkan</button>
-        <button class="btn btn-outline-custom" id="resetComparison">Reset</button>
+
+        <button
+          class="btn btn-primary-custom"
+          id="compareButton"
+          type="button">
+
+          Bandingkan Produk 🔍
+
+        </button>
+
+        <button
+          class="btn btn-outline-custom"
+          id="resetComparison"
+          type="button">
+
+          Reset
+
+        </button>
+
       </div>
 
+
       <p class="error-message" id="comparisonError"></p>
+
       <div id="comparisonResult"></div>
+
     </div>
+
   </div>
+
 </section>
 
-<!-- SPLIT BILL -->
+
+
+<!-- =====================================
+     SPLIT BILL
+===================================== -->
+
 <section class="section-padding section-soft" id="splitbill">
+
   <div class="container">
+
     <div class="section-heading">
-      <span class="eyebrow">FITUR 03</span>
-      <h2>Split Bill</h2>
-      <p>Bagi tagihan bersama teman dengan cara yang lebih praktis dan jelas.</p>
+
+      <span class="eyebrow">
+        🧾 FITUR 03
+      </span>
+
+      <h2>
+        Split Bill
+      </h2>
+
+      <p>
+        Bagi tagihan bersama teman dengan cara yang lebih praktis dan jelas.
+      </p>
+
+      <div class="heading-decoration">
+        <span>✦</span>
+        <span>✧</span>
+        <span>•</span>
+      </div>
+
     </div>
+
+
 
     <div class="calculator-card">
 
+
+      <!-- INTRO SPLIT BILL -->
+
       <div class="split-intro">
-        <h5>Bagaimana cara membagi tagihan?</h5>
-        <p>Pilih metode pembagian sesuai kebutuhanmu.</p>
+
+        <h5>
+          🍽️ Bagaimana cara membagi tagihan?
+        </h5>
+
+        <p>
+          Pilih metode pembagian sesuai kebutuhanmu.
+        </p>
+
       </div>
+
+
+
+      <!-- PILIH METODE -->
 
       <div class="method-selector">
-        <button class="method-button active" data-mode="equal" type="button">
-          <span class="method-icon">÷</span>
-          <strong>Bagi Rata</strong>
-          <small>Tagihan dibagi sama rata</small>
+
+        <button
+          class="method-button active"
+          data-mode="equal"
+          type="button">
+
+          <span class="method-icon">
+            ➗
+          </span>
+
+          <strong>
+            Bagi Rata
+          </strong>
+
+          <small>
+            Tagihan dibagi sama rata
+          </small>
+
         </button>
 
-        <button class="method-button" data-mode="custom" type="button">
-          <span class="method-icon">☷</span>
-          <strong>Sesuai Pesanan</strong>
-          <small>Setiap orang bayar sesuai pesanannya</small>
+
+        <button
+          class="method-button"
+          data-mode="custom"
+          type="button">
+
+          <span class="method-icon">
+            🧾
+          </span>
+
+          <strong>
+            Sesuai Pesanan
+          </strong>
+
+          <small>
+            Setiap orang bayar sesuai pesanannya
+          </small>
+
         </button>
+
       </div>
+
+
 
       <div class="split-form">
 
+
+        <!-- NAMA DAN BIAYA TAMBAHAN -->
+
         <div class="row g-3">
-          <div class="col-md-6">
-            <label class="form-label">Nama Tagihan (Opsional)</label>
-            <input type="text" id="billName" class="form-control"
-              placeholder="Contoh: Makan bersama">
-          </div>
 
           <div class="col-md-6">
-            <label class="form-label">Pajak / Biaya Tambahan (Rp)</label>
-            <input type="number" id="extraFee" class="form-control"
-              placeholder="Contoh: 10000" min="0" value="0">
-            <small class="form-hint">Masukkan total pajak, service charge, atau biaya lainnya.</small>
+
+            <label class="form-label">
+              📝 Nama Tagihan (Opsional)
+            </label>
+
+            <input
+              type="text"
+              id="billName"
+              class="form-control"
+              placeholder="Contoh: Makan bersama"
+            >
+
           </div>
+
+
+          <div class="col-md-6">
+
+            <label class="form-label">
+              💰 Pajak / Biaya Tambahan (Rp)
+            </label>
+
+            <input
+              type="number"
+              id="extraFee"
+              class="form-control"
+              placeholder="Contoh: 10000"
+              min="0"
+              value="0"
+            >
+
+            <small class="form-hint">
+              Masukkan total pajak, service charge, atau biaya lainnya.
+            </small>
+
+          </div>
+
         </div>
 
-        <!-- MODE BAGI RATA -->
+
+
+        <!-- =====================================
+             MODE BAGI RATA
+        ====================================== -->
+
         <div id="equalMode" class="mode-content">
+
           <div class="split-subheading">
-            <h5>Daftar Orang</h5>
-            <p>Tambahkan orang yang ikut membayar tagihan.</p>
+
+            <h5>
+              👥 Daftar Orang
+            </h5>
+
+            <p>
+              Tambahkan orang yang ikut membayar tagihan.
+            </p>
+
           </div>
+
 
           <div id="equalPeopleList" class="people-list">
-            <div class="person-row">
-              <input type="text" class="form-control person-name"
-                placeholder="Nama orang 1" value="Orang 1">
-              <button type="button" class="remove-person" disabled>×</button>
-            </div>
+
 
             <div class="person-row">
-              <input type="text" class="form-control person-name"
-                placeholder="Nama orang 2" value="Orang 2">
-              <button type="button" class="remove-person" disabled>×</button>
+
+              <input
+                type="text"
+                class="form-control person-name"
+                placeholder="Nama orang 1"
+                value="Orang 1"
+              >
+
+              <button
+                type="button"
+                class="remove-person"
+                disabled>
+
+                ×
+
+              </button>
+
             </div>
+
+
+            <div class="person-row">
+
+              <input
+                type="text"
+                class="form-control person-name"
+                placeholder="Nama orang 2"
+                value="Orang 2"
+              >
+
+              <button
+                type="button"
+                class="remove-person"
+                disabled>
+
+                ×
+
+              </button>
+
+            </div>
+
           </div>
 
-          <button type="button" class="add-person-button" id="addEqualPerson">
-            + Tambah Orang
+
+          <button
+            type="button"
+            class="add-person-button"
+            id="addEqualPerson">
+
+            + Tambah Orang 👤
+
           </button>
 
+
+
           <div class="total-input-box mt-4">
-            <label class="form-label">Total Tagihan (Rp)</label>
-            <input type="number" id="equalTotal" class="form-control"
-              placeholder="Contoh: 120000" min="0">
+
+            <label class="form-label">
+              💵 Total Tagihan (Rp)
+            </label>
+
+            <input
+              type="number"
+              id="equalTotal"
+              class="form-control"
+              placeholder="Contoh: 120000"
+              min="0"
+            >
+
           </div>
+
         </div>
 
-        <!-- MODE SESUAI PESANAN -->
+
+
+        <!-- =====================================
+             MODE SESUAI PESANAN
+        ====================================== -->
+
         <div id="customMode" class="mode-content" hidden>
+
           <div class="split-subheading">
-            <h5>Rincian Pesanan</h5>
-            <p>Masukkan nama setiap orang dan tambahkan makanan atau minuman yang dipesan.</p>
+
+            <h5>
+              🍔 Rincian Pesanan
+            </h5>
+
+            <p>
+              Masukkan nama setiap orang dan tambahkan makanan atau minuman yang dipesan.
+            </p>
+
           </div>
+
 
           <div id="customPeopleList" class="people-list"></div>
 
-          <button type="button" class="add-person-button" id="addCustomPerson">
-            + Tambah Orang
+
+          <button
+            type="button"
+            class="add-person-button"
+            id="addCustomPerson">
+
+            + Tambah Orang 👤
+
           </button>
+
+
 
           <div class="total-input-box mt-4">
+
             <div class="custom-total-preview">
-              <span>Total Seluruh Pesanan</span>
-              <strong id="customSubtotal">Rp0</strong>
+
+              <span>
+                🛒 Total Seluruh Pesanan
+              </span>
+
+              <strong id="customSubtotal">
+                Rp0
+              </strong>
+
             </div>
+
           </div>
+
         </div>
+
+
+
+        <!-- BUTTON HITUNG -->
 
         <div class="d-flex gap-2 mt-4">
-          <button type="button" class="btn btn-primary-custom" id="calculateSplit">
-            Hitung Tagihan
+
+          <button
+            type="button"
+            class="btn btn-primary-custom"
+            id="calculateSplit">
+
+            Hitung Tagihan ✨
+
           </button>
 
-          <button type="button" class="btn btn-outline-custom" id="resetSplit">
+
+          <button
+            type="button"
+            class="btn btn-outline-custom"
+            id="resetSplit">
+
             Reset
+
           </button>
+
         </div>
+
 
         <p class="error-message" id="splitError"></p>
 
-        <!-- HASIL SPLIT BILL -->
+
+
+        <!-- =====================================
+             HASIL SPLIT BILL
+        ====================================== -->
+
         <div id="splitResult" class="split-result" hidden>
+
+
           <div class="split-result-header">
-            <span class="result-caption">HASIL PEMBAGIAN TAGIHAN</span>
-            <h4 id="resultBillName">Rincian Tagihan</h4>
-            <h2 id="resultGrandTotal">Rp0</h2>
-            <p id="resultMethod">Metode pembagian</p>
+
+            <span class="result-caption">
+              🎉 HASIL PEMBAGIAN TAGIHAN
+            </span>
+
+            <h4 id="resultBillName">
+              Rincian Tagihan
+            </h4>
+
+            <h2 id="resultGrandTotal">
+              Rp0
+            </h2>
+
+            <p id="resultMethod">
+              Metode pembagian
+            </p>
+
           </div>
+
+
 
           <div class="split-summary">
-            <div>
-              <span>Total Pesanan</span>
-              <strong id="resultSubtotal">Rp0</strong>
-            </div>
 
             <div>
-              <span>Biaya Tambahan</span>
-              <strong id="resultExtra">Rp0</strong>
+
+              <span>
+                Total Pesanan
+              </span>
+
+              <strong id="resultSubtotal">
+                Rp0
+              </strong>
+
             </div>
 
+
             <div>
-              <span>Jumlah Orang</span>
-              <strong id="resultPeople">0 orang</strong>
+
+              <span>
+                Biaya Tambahan
+              </span>
+
+              <strong id="resultExtra">
+                Rp0
+              </strong>
+
             </div>
+
+
+            <div>
+
+              <span>
+                Jumlah Orang
+              </span>
+
+              <strong id="resultPeople">
+                0 orang
+              </strong>
+
+            </div>
+
           </div>
 
-          <h5 class="result-detail-title">Rincian Pembayaran</h5>
+
+
+          <h5 class="result-detail-title">
+            💳 Rincian Pembayaran
+          </h5>
+
+
           <div id="splitBreakdown"></div>
 
+
+
           <div class="split-total-footer">
-            <span>Total yang harus dibayar</span>
-            <strong id="resultCheckTotal">Rp0</strong>
+
+            <span>
+              Total yang harus dibayar
+            </span>
+
+            <strong id="resultCheckTotal">
+              Rp0
+            </strong>
+
           </div>
+
 
           <p class="result-note">
             Biaya tambahan pada metode sesuai pesanan dibagikan secara proporsional berdasarkan nominal pesanan.
           </p>
+
         </div>
 
       </div>
+
     </div>
+
   </div>
+
 </section>
 
-<!-- FOOTER -->
+
+
+<!-- =====================================
+     FOOTER
+===================================== -->
+
 <footer class="footer">
+
   <div class="container text-center">
-    <a class="navbar-brand" href="#home">beli<span>vio.</span></a>
-    <p>Shop Smart, Choose Better.</p>
-    <small>© 2026 Belivio. All rights reserved.</small>
+
+    <a class="navbar-brand" href="#home">
+      beli<span>vio.</span>
+    </a>
+
+    <p>
+      Shop Smart, Choose Better. 💙
+    </p>
+
+    <small>
+      © 2026 Belivio. All rights reserved.
+    </small>
+
   </div>
+
 </footer>
 
+
+
+<!-- =====================================
+     JAVASCRIPT
+===================================== -->
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script src="./app.js" defer></script>
 
 </body>
