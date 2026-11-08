@@ -654,3 +654,137 @@ body {
     grid-row: 1 / span 2;
   }
 }
+
+/* =====================================
+   SPLIT BILL - PESANAN PER ORANG
+===================================== */
+
+.custom-person-card {
+  background: #faf9ff;
+  border: 1px solid #e8e3f2;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+
+.custom-person-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.custom-person-header .form-control {
+  font-weight: 700;
+}
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 38px;
+  gap: 10px;
+  align-items: center;
+}
+
+.remove-order {
+  width: 38px;
+  height: 38px;
+  border: none;
+  border-radius: 9px;
+  background: #ffe8eb;
+  color: #d34d62;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.remove-order:hover {
+  background: #ffd5dc;
+}
+
+.remove-order:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.add-order-button {
+  margin-top: 12px;
+  padding: 7px 12px;
+  border: 1px dashed #8870c5;
+  border-radius: 8px;
+  background: transparent;
+  color: #7657b8;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add-order-button:hover {
+  background: #f0ebfa;
+}
+
+.person-subtotal {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #e8e3f2;
+  margin-top: 15px;
+  padding-top: 13px;
+}
+
+.person-subtotal span {
+  color: #777;
+  font-size: 14px;
+}
+
+.person-subtotal strong {
+  color: #7657b8;
+  font-size: 17px;
+}
+
+/* RINCIAN PESANAN PADA HASIL */
+
+.order-details {
+  margin-top: 7px;
+  font-size: 13px;
+}
+
+.order-detail {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.order-details small {
+  display: block;
+  color: #777;
+  margin-top: 7px;
+}
+
+/* RESPONSIVE MOBILE */
+
+@media (max-width: 576px) {
+  .custom-person-card {
+    padding: 13px;
+  }
+
+  .order-row {
+    grid-template-columns: 1fr 1fr 34px;
+    gap: 6px;
+  }
+
+  .remove-order {
+    width: 34px;
+    height: 38px;
+  }
+
+  .person-subtotal strong {
+    font-size: 15px;
+  }
+}
+
