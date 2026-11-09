@@ -1584,3 +1584,40 @@ html {
     bottom: 20px;
   }
 }
+/* TOMBOL MELAYANG MENUJU FITUR */
+#floatingFeatureButton {
+  position: fixed !important;
+  right: 15px !important;
+  bottom: 25px !important;
+  z-index: 99999 !important;
+
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  background: #568de0 !important;
+  color: white !important;
+  text-decoration: none !important;
+
+  box-shadow: 0 4px 15px rgba(50, 90, 150, 0.3);
+}
+
+#floatingFeatureButton span {
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 20px;
+}
+
+#floatingFeatureButton small {
+  font-size: 9px;
+  font-weight: 800;
+}
+
+html {
+  scroll-behavior: smooth;
+}
