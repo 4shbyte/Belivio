@@ -1621,3 +1621,64 @@ html {
 html {
   scroll-behavior: smooth;
 }
+/* HERO MOBILE - LEBIH RINGKAS */
+@media (max-width: 576px) {
+
+  .hero-section {
+    padding-top: 45px;
+    padding-bottom: 30px;
+  }
+
+  .hero-content {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .hero-label {
+    font-size: 12px;
+    padding: 10px 17px;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(32px, 8vw, 40px);
+    line-height: 1.15;
+    margin-top: 20px;
+    margin-bottom: 18px;
+  }
+
+  .hero-content p {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 22px;
+  }
+
+  .hero-actions {
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero-actions .btn-primary-custom {
+    padding: 13px 20px;
+    font-size: 14px;
+  }
+
+  .hero-actions .btn-text-custom {
+    font-size: 14px;
+  }
+
+  .hero-mini-info {
+    gap: 9px;
+    margin-top: 25px;
+    justify-content: center;
+  }
+
+  .hero-mini-info div {
+    padding: 9px 13px;
+    font-size: 12px;
+  }
+
+  .hero-visual {
+    margin-top: 25px;
+  }
+}
