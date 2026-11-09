@@ -1463,3 +1463,58 @@ select {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* =================================
+   RESPONSIVE FEATURE CARD - MOBILE
+================================= */
+
+@media (max-width: 576px) {
+
+  .features-section {
+    padding-top: 55px;
+    padding-bottom: 55px;
+  }
+
+  .features-section .row {
+    margin-top: 18px !important;
+    row-gap: 16px !important;
+  }
+
+  .feature-card {
+    min-height: unset;
+    height: auto;
+    padding: 22px 22px;
+    border-radius: 24px;
+  }
+
+  .feature-icon {
+    width: 58px;
+    height: 58px;
+    font-size: 29px;
+    margin-bottom: 16px;
+    border-radius: 18px;
+  }
+
+  .feature-number {
+    font-size: 12px;
+    top: 20px;
+    right: 20px;
+  }
+
+  .feature-card h3 {
+    font-size: 19px;
+    margin-bottom: 9px;
+  }
+
+  .feature-card p {
+    font-size: 13px;
+    line-height: 1.6;
+    margin-bottom: 14px;
+  }
+
+  .feature-link {
+    font-size: 13px;
+    margin-top: 5px;
+  }
+
+}
