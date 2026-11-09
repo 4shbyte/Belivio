@@ -1464,57 +1464,54 @@ select {
   }
 }
 
-/* =================================
-   RESPONSIVE FEATURE CARD - MOBILE
-================================= */
-
+/* FEATURE CARD - MOBILE COMPACT */
 @media (max-width: 576px) {
 
   .features-section {
-    padding-top: 55px;
-    padding-bottom: 55px;
+    padding-top: 40px;
+    padding-bottom: 40px;
   }
 
   .features-section .row {
-    margin-top: 18px !important;
-    row-gap: 16px !important;
+    margin-top: 12px !important;
+    row-gap: 12px !important;
   }
 
   .feature-card {
     min-height: unset;
     height: auto;
-    padding: 22px 22px;
-    border-radius: 24px;
+    padding: 16px 18px;
+    border-radius: 20px;
   }
 
   .feature-icon {
-    width: 58px;
-    height: 58px;
-    font-size: 29px;
-    margin-bottom: 16px;
-    border-radius: 18px;
+    width: 46px;
+    height: 46px;
+    font-size: 23px;
+    margin-bottom: 10px;
+    border-radius: 15px;
   }
 
   .feature-number {
-    font-size: 12px;
-    top: 20px;
-    right: 20px;
+    font-size: 11px;
+    top: 16px;
+    right: 17px;
   }
 
   .feature-card h3 {
-    font-size: 19px;
-    margin-bottom: 9px;
+    font-size: 17px;
+    margin-bottom: 6px;
   }
 
   .feature-card p {
-    font-size: 13px;
-    line-height: 1.6;
-    margin-bottom: 14px;
+    font-size: 12px;
+    line-height: 1.45;
+    margin-bottom: 9px;
   }
 
   .feature-link {
-    font-size: 13px;
-    margin-top: 5px;
+    font-size: 12px;
+    margin-top: 3px;
   }
-
 }
+
