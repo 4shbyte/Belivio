@@ -1526,5 +1526,61 @@ select {
     font-size: 11px;
     margin: 0;
   }
+}
 
+/* FLOATING BUTTON MENU FITUR */
+
+html {
+  scroll-behavior: smooth;
+}
+
+.floating-feature-button {
+  position: fixed;
+  right: 16px;
+  bottom: 25px;
+  z-index: 999;
+
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+
+  background: #568de0;
+  color: white;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-decoration: none;
+  box-shadow: 0 5px 18px rgba(65, 112, 180, 0.25);
+
+  transition: 0.2s ease;
+}
+
+.floating-feature-button span {
+  font-size: 23px;
+  font-weight: 900;
+  line-height: 20px;
+}
+
+.floating-feature-button small {
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.floating-feature-button:hover {
+  background: #3975cb;
+  color: white;
+  transform: translateY(-3px);
+}
+
+/* MOBILE */
+@media (max-width: 576px) {
+  .floating-feature-button {
+    width: 48px;
+    height: 48px;
+    right: 13px;
+    bottom: 20px;
+  }
 }
